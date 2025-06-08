@@ -1,10 +1,29 @@
 const { test, expect } = require('@playwright/test');
 
-test('login with valid credentials', async ({ page }) => {
-  await page.goto('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login');
-  await page.fill('input[name="username"]', 'Admin');
-  await page.fill('input[name="password"]', 'admin123');
-  await page.click('button[type="submit"]');
-  await page.waitForSelector('text=Dashboard', { timeout: 10000 });
+async function fetchOtp(context) {
+  const mail = await context.newPage();
+  await mail.goto('https://yopmail.com/?Ryan_Adams1');
+  const inboxFrame = mail.frameLocator('#ifinbox');
+  await inboxFrame.locator('div.m').first().click();
+  const mailFrame = mail.frameLocator('#ifmail');
+  const body = await mailFrame.locator('body').innerText();
+  await mail.close();
+  return body.match(/\b(\d{6})\b/)[1];
+}
+
+test('login with OTP', async ({ page, context }) => {
+  await page.goto('https://xpendless-frontend-staging-d6pkpujjuq-ww.a.run.app/login');
+  await page.getByLabel('Email address').fill('Ryan_Adams1@yopmail.com');
+  await page.getByLabel('Password').fill('Xpendless@A1');
+  await page.getByRole('button', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
+
+  const otp = await fetchOtp(context);
+  const digits = otp.split('');
+  for (let i = 0; i < digits.length; i++) {
+    await page.getByRole('textbox', { name: `Please enter OTP character ${i + 1}` }).fill(digits[i]);
+  }
+  await page.getByRole('button', { name: 'Login' }).click();
+  await page.waitForURL('**/dashboard');
   await expect(page.url()).toContain('/dashboard');
 });
