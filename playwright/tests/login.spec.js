@@ -39,6 +39,20 @@ test('login with OTP', async ({ page, context }) => {
 test('logout via icon', async ({ page, context }) => {
   await login(page, context);
 
+  // open collapsed navigation if necessary
+    const navToggle = page.locator('button.navbar-toggler');
+    if (await navToggle.isVisible()) {
+      await navToggle.click();
+    }
+
+  // some pages place the logout link under the user email menu
+  if (!(await logoutLink.isVisible())) {
+    const userMenu = page.getByText(/ryan_adams1/i);
+    if (await userMenu.isVisible()) {
+      await userMenu.click();
+    }
+  }
+
   await page.getByLabel('Email address').waitFor();
   await expect(page.getByLabel('Email address')).toBeVisible();
 });
