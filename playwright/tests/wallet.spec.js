@@ -49,9 +49,10 @@ test('company wallet add funds', async ({ page, context }) => {
   await page.waitForTimeout(3000);
   await page.getByRole('button', { name: /add funds/i }).click();
   await page.waitForTimeout(3000);
-  await page.getByLabel(/amount/i).fill('1000');
+  await page.getByRole('textbox', { name: /^amount\*$/i }).fill('1000');
+  await page.getByLabel(/narrative/i).fill('Adding Fund');
   await page.waitForTimeout(3000);
-  await page.getByRole('button', { name: /confirm|add/i }).click();
+  await page.getByRole('button', { name: /save|confirm|add/i }).click();
   await page.waitForTimeout(3000);
   await logout(page);
 });
