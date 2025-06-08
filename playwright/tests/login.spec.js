@@ -38,7 +38,7 @@ test('login with OTP', async ({ page, context }) => {
 
 test('logout via icon', async ({ page, context }) => {
   await login(page, context);
-  await page.locator('a.nav-link').last().click();
+  await page.getByRole('link', { name: /logout/i }).click({ force: true });
   await page.getByLabel('Email address').waitFor();
   await expect(page.getByLabel('Email address')).toBeVisible();
 });
