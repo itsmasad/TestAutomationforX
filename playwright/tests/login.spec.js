@@ -2,6 +2,10 @@ const { test, expect } = require('@playwright/test');
 
 async function fetchOtp(context) {
   const mail = await context.newPage();
+
+  // Wait 5 seconds before navigating
+  await mail.waitForTimeout(5000);
+  
   await mail.goto('https://yopmail.com/?Ryan_Adams1');
   const inboxFrame = mail.frameLocator('#ifinbox');
   await inboxFrame.locator('div.m').first().click();
