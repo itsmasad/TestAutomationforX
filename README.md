@@ -1,7 +1,7 @@
 # TestAutomationforX
 
 This repository contains automated end-to-end tests written in JavaScript using
-Playwright.
+
 
 ## Setup
 
