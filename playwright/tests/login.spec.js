@@ -18,6 +18,7 @@ test('login with OTP', async ({ page, context }) => {
   await page.getByRole('button', { name: 'Login' }).click();
   await page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
 
+
   const otp = await fetchOtp(context);
   const digits = otp.split('');
   for (let i = 0; i < digits.length; i++) {
