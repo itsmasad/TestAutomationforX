@@ -1,8 +1,7 @@
 # TestAutomationforX
 
 This repository contains automated end-to-end tests written in JavaScript using
-Playwright. The included test logs into the Xpendless staging site using a
-one-time password retrieved from Yopmail.
+
 
 ## Setup
 
