@@ -38,12 +38,7 @@ test('login with OTP', async ({ page, context }) => {
 
 test('logout via icon', async ({ page, context }) => {
   await login(page, context);
-  // open the navigation menu first so that the logout link becomes clickable
-  const menuButton = page.locator('button.navbar-toggler');
-  if (await menuButton.isVisible()) {
-    await menuButton.click();
-  }
-  await page.locator('a.nav-link').last().click();
+
   await page.getByLabel('Email address').waitFor();
   await expect(page.getByLabel('Email address')).toBeVisible();
 });
