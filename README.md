@@ -1,8 +1,7 @@
 # TestAutomationforX
 
 This repository contains automated end-to-end tests written in JavaScript using
-Playwright. Older Selenium tests remain in the repo but the preferred approach
-is to run the Playwright suites.
+Playwright.
 
 ## Setup
 
