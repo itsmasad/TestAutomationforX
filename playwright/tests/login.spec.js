@@ -15,13 +15,12 @@ async function fetchOtp(context) {
   return body.match(/\b(\d{6})\b/)[1];
 }
 
-test('login with OTP', async ({ page, context }) => {
+async function login(page, context) {
   await page.goto('https://xpendless-frontend-staging-d6pkpujjuq-ww.a.run.app/login');
   await page.getByLabel('Email address').fill('Ryan_Adams1@yopmail.com');
   await page.getByLabel('Password').fill('Xpendless@A1');
   await page.getByRole('button', { name: 'Login' }).click();
   await page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
-
 
   const otp = await fetchOtp(context);
   const digits = otp.split('');
@@ -29,6 +28,17 @@ test('login with OTP', async ({ page, context }) => {
     await page.getByRole('textbox', { name: `Please enter OTP character ${i + 1}` }).fill(digits[i]);
   }
   await page.getByRole('button', { name: 'Login' }).click();
-  await page.waitForURL('**/dashboard');
-  await expect(page.url()).toContain('/dashboard');
+  await page.getByRole('link', { name: /dashboard/i }).waitFor();
+  await expect(page.getByRole('link', { name: /dashboard/i })).toBeVisible();
+}
+
+test('login with OTP', async ({ page, context }) => {
+  await login(page, context);
+});
+
+test('logout via icon', async ({ page, context }) => {
+  await login(page, context);
+  await page.locator('a.nav-link').last().click();
+  await page.getByLabel('Email address').waitFor();
+  await expect(page.getByLabel('Email address')).toBeVisible();
 });
