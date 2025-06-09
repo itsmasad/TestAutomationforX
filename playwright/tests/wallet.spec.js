@@ -37,7 +37,7 @@ async function logout(page) {
       await userMenu.click();
     }
   }
-  await logoutLink.click({ force: true });
+  // await logoutLink.click({ force: true });
   await page.getByLabel('Email address').waitFor();
   await expect(page.getByLabel('Email address')).toBeVisible();
 }
@@ -51,6 +51,13 @@ test('company wallet add funds', async ({ page, context }) => {
   await page.getByLabel(/narrative/i).fill('Adding Fund');
   await page.getByRole('button', { name: /^save$/i }).click();
   await page.waitForTimeout(3000);
+  await page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
+  const mobileOtp = '123456'.split('');
+  for (let i = 0; i < mobileOtp.length; i++) {
+    await page.getByRole('textbox', { name: `Please enter OTP character ${i + 1}` }).fill(mobileOtp[i]);
+  }
+  await page.getByRole('button', { name: /continue|confirm|verify/i }).click();
+  await expect(page.getByText(/Fund Added Successfully!/i)).toBeVisible();
   await logout(page);
 });
 
