@@ -69,12 +69,11 @@ test('petty cash withdraw cash', async ({ page, context }) => {
 test('petty cash disburse cash to Card Holder', async ({ page, context }) => {
   await login(page, context);
   await page.getByRole('link', { name: /petty cash/i }).click();
-  await page.locator('#disburse_petty_cash').click();
-  await page.locator('#employee_name').click();
-  await page.getByText('Card Holder').click();
-  await page.locator('#amount').fill('150');
-  await page.locator('#description').fill('Disbursing petty cash');
-  await page.locator('#submit_form').click();
+  await page.getByRole('button', { name: /disburse/i }).click();
+  await page.getByRole('combobox', { name: /employee|user/i }).selectOption({ label: 'Card Holder' });
+  await page.getByRole('textbox', { name: /amount/i }).fill('150');
+  await page.getByRole('textbox', { name: /description|narrative/i }).fill('Disbursing petty cash');
+  await page.getByRole('button', { name: /submit|save/i }).click();
   await expect(page.locator('.Toastify__toast--success')).toBeVisible();
   await logout(page);
 });
@@ -84,11 +83,11 @@ test('petty cash disburse cash to Card Holder', async ({ page, context }) => {
 test('petty cash return cash from user Card Holder', async ({ page, context }) => {
   await login(page, context);
   await page.getByRole('link', { name: /petty cash/i }).click();
-  await page.locator('#return_petty_cash').click();
-  await page.locator('#return_user_petty_cash').selectOption({ label: 'Card Holder' });
-  await page.locator('#return_amount_petty_cash').fill('50');
-  await page.locator('#return_desc_petty_cash').fill('Returning cash');
-  await page.locator('#submit_return_petty_cash').click();
+  await page.getByRole('button', { name: /return/i }).click();
+  await page.getByRole('combobox', { name: /user/i }).selectOption({ label: 'Card Holder' });
+  await page.getByRole('textbox', { name: /amount/i }).fill('50');
+  await page.getByRole('textbox', { name: /description|narrative/i }).fill('Returning cash');
+  await page.getByRole('button', { name: /submit|save/i }).click();
   await expect(page.locator('.Toastify__toast--success')).toBeVisible();
   await logout(page);
 });
