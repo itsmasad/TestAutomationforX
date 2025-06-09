@@ -70,10 +70,12 @@ test('petty cash disburse cash to Card Holder', async ({ page, context }) => {
   await login(page, context);
   await page.getByRole('link', { name: /petty cash/i }).click();
   await page.getByRole('button', { name: /disburse/i }).click();
-  
-  await page.locator('#employee_name').click();
-  await page.getByText('Card Holder').click();
-
+  const employeeDrop = page.getByRole('combobox', { name: /employee|user/i });
+  await employeeDrop.click();
+  await page.getByRole('option', { name: 'Card Holder' }).click();
+  const returnDrop = page.getByRole('combobox', { name: /user/i });
+  await returnDrop.click();
+  await page.getByRole('option', { name: 'Card Holder' }).click();
   await page.getByRole('textbox', { name: /amount/i }).fill('150');
   await page.getByRole('textbox', { name: /description|narrative/i }).fill('Disbursing petty cash');
   await page.getByRole('button', { name: /submit|save/i }).click();
