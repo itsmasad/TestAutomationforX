@@ -70,7 +70,10 @@ test('petty cash disburse cash to Card Holder', async ({ page, context }) => {
   await login(page, context);
   await page.getByRole('link', { name: /petty cash/i }).click();
   await page.getByRole('button', { name: /disburse/i }).click();
-  await page.getByRole('combobox', { name: /employee|user/i }).selectOption({ label: 'Card Holder' });
+  
+  await page.locator('#employee_name').click();
+  await page.getByText('Card Holder').click();
+
   await page.getByRole('textbox', { name: /amount/i }).fill('150');
   await page.getByRole('textbox', { name: /description|narrative/i }).fill('Disbursing petty cash');
   await page.getByRole('button', { name: /submit|save/i }).click();
@@ -84,7 +87,9 @@ test('petty cash return cash from user Card Holder', async ({ page, context }) =
   await login(page, context);
   await page.getByRole('link', { name: /petty cash/i }).click();
   await page.getByRole('button', { name: /return/i }).click();
-  await page.getByRole('combobox', { name: /user/i }).selectOption({ label: 'Card Holder' });
+  await page.locator('#return_user_petty_cash').click();
+  await page.getByText('Card Holder').click();
+
   await page.getByRole('textbox', { name: /amount/i }).fill('50');
   await page.getByRole('textbox', { name: /description|narrative/i }).fill('Returning cash');
   await page.getByRole('button', { name: /submit|save/i }).click();
