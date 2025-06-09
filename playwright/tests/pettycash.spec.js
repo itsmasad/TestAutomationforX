@@ -79,3 +79,17 @@ test('petty cash disburse cash to Card Holder', async ({ page, context }) => {
   await logout(page);
 });
 
+
+// Test: petty cash return cash from user "Card Holder"
+test('petty cash return cash from user Card Holder', async ({ page, context }) => {
+  await login(page, context);
+  await page.getByRole('link', { name: /petty cash/i }).click();
+  await page.locator('#return_petty_cash').click();
+  await page.locator('#return_user_petty_cash').selectOption({ label: 'Card Holder' });
+  await page.locator('#return_amount_petty_cash').fill('50');
+  await page.locator('#return_desc_petty_cash').fill('Returning cash');
+  await page.locator('#submit_return_petty_cash').click();
+  await expect(page.locator('.Toastify__toast--success')).toBeVisible();
+  await logout(page);
+});
+

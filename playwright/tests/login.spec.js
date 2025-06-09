@@ -32,26 +32,26 @@ async function login(page, context) {
   await expect(page.getByRole('link', { name: /dashboard/i })).toBeVisible();
 }
 
-// test('login with OTP', async ({ page, context }) => {
-//   await login(page, context);
-// });
+test('login with OTP', async ({ page, context }) => {
+  await login(page, context);
+});
 
-// test('logout via icon', async ({ page, context }) => {
-//   await login(page, context);
-//   const logoutLink = page.getByRole('link', { name: /logout/i });
+test('logout via icon', async ({ page, context }) => {
+  await login(page, context);
+  const logoutLink = page.getByRole('link', { name: /logout/i });
 
 
 
-//   // some pages place the logout link under the user email menu
-//   if (!(await logoutLink.isVisible())) {
-//     const userMenu = page.getByText(/ryan_adams1/i);
-//     if (await userMenu.isVisible()) {
-//       await userMenu.click();
-//     }
-//   }
+  // some pages place the logout link under the user email menu
+  if (!(await logoutLink.isVisible())) {
+    const userMenu = page.getByText(/ryan_adams1/i);
+    if (await userMenu.isVisible()) {
+      await userMenu.click();
+    }
+  }
 
-//   // await logoutLink.click({ force: true });
+  // await logoutLink.click({ force: true });
 
-//   await page.getByLabel('Email address').waitFor();
-//   await expect(page.getByLabel('Email address')).toBeVisible();
-// });
+  await page.getByLabel('Email address').waitFor();
+  await expect(page.getByLabel('Email address')).toBeVisible();
+});
