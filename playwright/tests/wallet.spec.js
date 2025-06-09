@@ -78,23 +78,3 @@ test('company wallet withdraw funds', async ({ page, context }) => {
   await expect(page.getByText(/Fund Withdrawal Successful!/i)).toBeVisible();
   await logout(page);
 });
-
-// // Test 3: petty cash add funds
-// test('petty cash add funds', async ({ page, context }) => {
-//   await login(page, context);
-//   await page.getByRole('link', { name: /petty cash/i }).click();
-//   await page.getByRole('button', { name: /add funds/i }).click();
-//   await page.getByLabel(/amount/i).fill('1000');
-//   await page.getByRole('button', { name: /confirm|add/i }).click();
-//   await logout(page);
-// });
-
-// // Test 4: petty cash withdraw funds
-// test('petty cash withdraw funds', async ({ page, context }) => {
-//   await login(page, context);
-//   await page.getByRole('link', { name: /petty cash/i }).click();
-//   await page.getByRole('button', { name: /withdraw/i }).click();
-//   await page.getByLabel(/amount/i).fill('500');
-//   await page.getByRole('button', { name: /confirm|withdraw/i }).click();
-//   await logout(page);
-// });
