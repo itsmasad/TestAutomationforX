@@ -41,40 +41,27 @@ async function logout(page) {
   await expect(page.getByLabel('Email address')).toBeVisible();
 }
 
-// Test: petty cash add funds
-test('petty cash add funds', async ({ page, context }) => {
+// Test: petty cash add cash
+test('petty cash add cash', async ({ page, context }) => {
   await login(page, context);
   await page.getByRole('link', { name: /petty cash/i }).click();
-  await page.getByRole('button', { name: /add funds/i }).click();
-  await page.getByRole('textbox', { name: /^amount\*$/i }).fill('200');
-  await page.getByLabel(/narrative/i).fill('Adding petty cash');
-  await page.getByRole('button', { name: /^save$/i }).click();
-  await page.waitForTimeout(3000);
-  await page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
-  const mobileOtp = '123456'.split('');
-  for (let i = 0; i < mobileOtp.length; i++) {
-    await page.getByRole('textbox', { name: `Please enter OTP character ${i + 1}` }).fill(mobileOtp[i]);
-  }
-  await page.getByRole('button', { name: /continue|confirm|verify/i }).click();
-  await expect(page.getByText(/Fund Added Successfully!/i)).toBeVisible();
+  await page.locator('#add_petty_cash').click();
+  await page.locator('#add_amount_petty_cash').fill('200');
+  await page.locator('#add_desc_petty_cash').fill('Adding petty cash');
+  await page.locator('#submit_add_petty_cash').click();
+  await expect(page.locator('.Toastify__toast--success')).toBeVisible();
   await logout(page);
 });
 
-// Test: petty cash withdraw funds
-test('petty cash withdraw funds', async ({ page, context }) => {
+// Test: petty cash withdraw cash
+test('petty cash withdraw cash', async ({ page, context }) => {
   await login(page, context);
   await page.getByRole('link', { name: /petty cash/i }).click();
-  await page.getByRole('button', { name: /withdraw/i }).click();
-  await page.getByRole('textbox', { name: /^amount\*$/i }).fill('100');
-  await page.getByLabel(/narrative/i).fill('Withdrawing petty cash');
-  await page.getByRole('button', { name: /^save$/i }).click();
-  await page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
-  const mobileOtp = '123456'.split('');
-  for (let i = 0; i < mobileOtp.length; i++) {
-    await page.getByRole('textbox', { name: `Please enter OTP character ${i + 1}` }).fill(mobileOtp[i]);
-  }
-  await page.getByRole('button', { name: /continue|confirm|verify/i }).click();
-  await expect(page.getByText(/Fund Withdrawal Successful!/i)).toBeVisible();
+  await page.locator('#withdraw_petty_cash').click();
+  await page.locator('#withraw_amount_petty_cash').fill('100');
+  await page.locator('#withdraw_desc_petty_cash').fill('Withdrawing petty cash');
+  await page.locator('#submit_withdraw_petty_cash').click();
+  await expect(page.locator('.Toastify__toast--success')).toBeVisible();
   await logout(page);
 });
 
