@@ -62,14 +62,22 @@ test('company wallet add funds', async ({ page, context }) => {
 });
 
 // Test 2: company wallet withdraw funds
-// test('company wallet withdraw funds', async ({ page, context }) => {
-//   await login(page, context);
-//   await page.getByRole('link', { name: /company wallet/i }).click();
-//   await page.getByRole('button', { name: /withdraw/i }).click();
-//   await page.getByLabel(/amount/i).fill('500');
-//   await page.getByRole('button', { name: /confirm|withdraw/i }).click();
-//   await logout(page);
-// });
+test('company wallet withdraw funds', async ({ page, context }) => {
+  await login(page, context);
+  await page.getByRole('link', { name: /company wallet/i }).click();
+  await page.getByRole('button', { name: /withdraw/i }).click();
+  await page.getByRole('textbox', { name: /^amount\*$/i }).fill('500');
+  await page.getByLabel(/narrative/i).fill('Withdrawing Fund');
+  await page.getByRole('button', { name: /^save$/i }).click();
+  await page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
+  const mobileOtp = '123456'.split('');
+  for (let i = 0; i < mobileOtp.length; i++) {
+    await page.getByRole('textbox', { name: `Please enter OTP character ${i + 1}` }).fill(mobileOtp[i]);
+  }
+  await page.getByRole('button', { name: /continue|confirm|verify/i }).click();
+  await expect(page.getByText(/Fund Withdrawal Successful!/i)).toBeVisible();
+  await logout(page);
+});
 
 // // Test 3: petty cash add funds
 // test('petty cash add funds', async ({ page, context }) => {
