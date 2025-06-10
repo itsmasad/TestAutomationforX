@@ -8,7 +8,10 @@ const envUrls = {
   production: process.env.PROD_URL,
 };
 
-const currentEnv = process.env.CURRENT_ENV || 'staging';
+// The environment to run against is provided by the wrapper script `run-tests.js`
+// which sets `CURRENT_ENV`. For backwards compatibility we also read
+// `npm_config_env` when the script is invoked with `--env`.
+const currentEnv = process.env.CURRENT_ENV || process.env.npm_config_env || 'staging';
 const baseURL = envUrls[currentEnv] || envUrls.staging;
 
 module.exports = defineConfig({

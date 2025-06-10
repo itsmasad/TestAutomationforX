@@ -14,16 +14,19 @@ npm install
 npx playwright install
 ```
 
-The `playwright/.env` file controls which deployment the tests run against.
-Set `CURRENT_ENV` to `dev`, `staging`, or `production` to target the
-corresponding URL defined in the same file.
+The `playwright/.env` file defines the base URLs for each deployment.
+When running the tests you choose which environment to target by passing the
+desired environment name to the `npm test` command:
+`npm test <dev|staging|production>`.
+The command uses a small wrapper script that sets the environment before
+invoking Playwright.
 
 ## Running Playwright Tests
 
 From the same `playwright` directory execute the test suite with:
 
 ```bash
-npm test
+npm test staging
 ```
 
 If you accidentally run `npm test` from the repository root you will see an
