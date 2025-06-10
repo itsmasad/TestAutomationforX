@@ -21,16 +21,21 @@ function randomAlpha(length = 6) {
   return result;
 }
 
+function randomRegistrationNumber() {
+  return `${Math.floor(10000000 + Math.random() * 90000000)}`;
+}
+
 // Test: company registration flow
 // Steps reflect the current signup process:
 // 1. Enter admin details (first name, last name, email)
 // 2. Retrieve the email verification OTP from Yopmail
 // 3. Provide mobile number
 // 4. Confirm the mobile OTP using static code '123456'
-// 5. Set password and confirm password
-// 6. Enter business information
-// 7. Choose the first subscription package and skip onboarding
-// 8. Verify that the dashboard is displayed
+// 5. Set password
+// 6. Confirm password
+// 7. Enter business information
+// 8. Choose the first subscription package and skip onboarding
+// 9. Verify that the dashboard is displayed
 
 
 test('create company account', async ({ page, context }) => {
@@ -83,18 +88,23 @@ test('create company account', async ({ page, context }) => {
   }
   await page.getByRole('button', { name: /continue|confirm|verify/i }).click();
 
-  // Wait for password fields to appear before continuing
-  await page.getByLabel(/password/i).waitFor();
-
-
-  // Step 5: set password
-  await page.getByLabel(/password/i).fill(password);
-  await page.getByLabel(/confirm password/i).fill(password);
+  // Step 5: provide password then continue
+  const passwordInput = page.locator('input[type="password"]');
+  await passwordInput.waitFor();
+  await passwordInput.fill(password);
   await page.getByRole('button', { name: /continue|create account/i }).click();
 
-  // Step 6: business information
-  await page.getByLabel(/business name/i).fill(companyName);
-  await page.getByRole('button', { name: /create account|continue/i }).click();
+  // Step 6: confirm password on the next screen
+  await passwordInput.waitFor();
+  await passwordInput.fill(password);
+  await page.getByRole('button', { name: /continue|create account/i }).click();
+
+  // Step 7: business information
+  await page.getByLabel(/company name/i).waitFor();
+  await page.getByLabel(/company name/i).fill(companyName);
+  const regNo = randomRegistrationNumber();
+  await page.getByLabel(/registration number/i).fill(regNo);
+  await page.getByRole('button', { name: /register/i }).click();
 
   // Choose the first subscription package
   await page.getByRole('button', { name: /select plan|subscribe/i }).first().click();
