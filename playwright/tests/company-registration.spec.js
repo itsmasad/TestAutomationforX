@@ -19,15 +19,12 @@ test.describe.serial('company onboarding', () => {
     await context.close();
   });
 
-  // Test: company registration flow using POM
-  test('create company account', async () => {
+  // Test: company registration and verification flow using POM
+  test('create and verify company account', async () => {
     const regPage = new CompanyRegistrationPage(page, context);
     await regPage.registerCompany();
     await expect(page.getByRole('link', { name: /dashboard/i })).toBeVisible();
-  });
 
-  // Continue the onboarding by completing company verification in the same browser session.
-  test('complete company verification', async () => {
     const verifyPage = new CompanyVerificationPage(page);
     await verifyPage.completeVerification();
   });
