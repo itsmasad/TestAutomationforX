@@ -19,8 +19,10 @@ When running the tests you choose which environment to target by passing the
 desired environment name to the `npm test` command:
 
 ```bash
-npm test <dev|staging|production>
+npm test <dev|staging|prod>
 ```
+Use `prod` when you want to run tests against the production deployment.
+
 
 The command uses a small wrapper script that sets the environment before
 invoking Playwright. You can also set the `CURRENT_ENV` variable manually if
@@ -49,6 +51,10 @@ From the same `playwright` directory execute the test suite with:
 
 ```bash
 npm test staging
+```
+To target the production site:
+```bash
+npm test prod
 ```
 
 If you accidentally run `npm test` from the repository root you will see an
