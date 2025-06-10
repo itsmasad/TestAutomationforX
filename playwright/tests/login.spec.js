@@ -22,7 +22,7 @@ async function fetchOtp(context) {
 // Log in to the application and wait until the dashboard is visible
 async function login(page, context) {
   // Navigate to the login page
-  await page.goto('https://xpendless-frontend-staging-d6pkpujjuq-ww.a.run.app/login');
+  await page.goto('/login');
 
   // Fill in credentials
   await page.getByLabel('Email address').fill('Ryan_Adams1@yopmail.com');
