@@ -56,6 +56,9 @@ test('create company account', async ({ page, context }) => {
   // Step 2: verify email via OTP retrieved from Yopmail
   await page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
   const inbox = email.split('@')[0];
+  // Wait for password fields to appear before continuing
+  await page.getByLabel(/password/i).waitFor();
+
   const mail = await context.newPage();
   await mail.waitForTimeout(5000);
   await mail.goto(`https://yopmail.com/?${inbox}`);
