@@ -16,7 +16,7 @@ async function fetchOtp(context) {
 
 // Perform login flow including fetching OTP from email
 async function login(page, context) {
-  await page.goto('https://xpendless-frontend-staging-d6pkpujjuq-ww.a.run.app/login');
+  await page.goto('/login');
   await page.getByLabel('Email address').fill('Ryan_Adams1@yopmail.com');
   await page.getByLabel('Password').fill('Xpendless@A1');
   await page.getByRole('button', { name: 'Login' }).click();
