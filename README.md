@@ -90,5 +90,6 @@ that data can be managed in a single location.
    npx allure open ./allure-report
    ```
 
-The report lists each test along with its pass/fail status, stack trace, and
-screenshot attachments captured by the hooks in `test-hooks.js`.
+The report lists each test along with its pass/fail status and stack trace.
+If a test fails, the hooks in `test-hooks.js` capture a screenshot which is
+attached to the report.
