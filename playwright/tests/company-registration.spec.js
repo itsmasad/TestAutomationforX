@@ -9,23 +9,33 @@ function randomEmail() {
 
 function randomPhone() {
   return `080${Math.floor(10000000 + Math.random() * 9000000)}`;
+}
 
+function randomAlpha(length = 6) {
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += letters.charAt(Math.floor(Math.random() * letters.length));
+  }
+  return result;
 }
 
 // Test: company registration flow
-// - fills the registration form with random data
-// - confirms the mobile OTP using static code '123456'
-// - selects the first available subscription package
-// - skips optional onboarding screens
-// - verifies that dashboard is shown after registration
+// Steps reflect the current signup process:
+// 1. Enter admin details (first name, last name, email)
+// 2. Retrieve the email verification OTP from Yopmail
+// 3. Enter company information and mobile number
+// 4. Confirm the mobile OTP using static code '123456'
+// 5. Choose the first subscription package and skip onboarding
+// 6. Verify that the dashboard is displayed
 
-test('create company account', async ({ page }) => {
+test('create company account', async ({ page, context }) => {
   const email = randomEmail();
 
   const randomSuffix = Date.now().toString().slice(-4);
   const companyName = `Test Company ${randomSuffix}`;
-  const adminFirst = `Admin${randomSuffix}`;
-  const adminLast = `User${randomSuffix}`;
+  const adminFirst = `Admin${randomAlpha(5)}`;
+  const adminLast = `User${randomAlpha(5)}`;
   const mobile = randomPhone();
   const password = 'Password@123';
 
@@ -33,20 +43,37 @@ test('create company account', async ({ page }) => {
   await page.goto('https://xpendless-frontend-staging-d6pkpujjuq-ww.a.run.app/');
   await page.getByRole('link', { name: /create account for your company/i }).click();
 
+  // Step 1: admin details
+  await page.getByLabel(/first name/i).fill(adminFirst);
+  await page.getByLabel(/last name/i).fill(adminLast);
+  await page.getByLabel(/email address/i).fill(email);
+  await page.getByRole('button', { name: /continue/i }).click();
 
-  // Fill company details
+  // Step 2: verify email via OTP retrieved from Yopmail
+  await page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
+  const inbox = email.split('@')[0];
+  const mail = await context.newPage();
+  await mail.waitForTimeout(5000);
+  await mail.goto(`https://yopmail.com/?${inbox}`);
+  const inboxFrame = mail.frameLocator('#ifinbox');
+  await inboxFrame.locator('div.m').first().click();
+  const mailFrame = mail.frameLocator('#ifmail');
+  const body = await mailFrame.locator('body').innerText();
+  await mail.close();
+  const otpEmail = body.match(/\b(\d{6})\b/)[1];
+  for (let i = 0; i < otpEmail.length; i++) {
+    await page.getByRole('textbox', { name: `Please enter OTP character ${i + 1}` }).fill(otpEmail[i]);
+  }
+  await page.getByRole('button', { name: /continue|verify|confirm/i }).click();
+
+  // Step 3: company information
   await page.getByLabel(/business name/i).fill(companyName);
-  await page.getByLabel(/admin first name/i).fill(adminFirst);
-  await page.getByLabel(/admin last name/i).fill(adminLast);
-  await page.getByLabel(/admin email/i).fill(email);
   await page.getByLabel(/mobile number/i).fill(mobile);
   await page.getByLabel(/password/i).fill(password);
   await page.getByLabel(/confirm password/i).fill(password);
+  await page.getByRole('button', { name: /create account|continue/i }).click();
 
-  // Submit the registration form
-  await page.getByRole('button', { name: /create account/i }).click();
-
-  // Confirm OTP with static value
+  // Step 4: confirm mobile OTP with static value
   await page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
   const otpDigits = '123456'.split('');
   for (let i = 0; i < otpDigits.length; i++) {
