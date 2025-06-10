@@ -69,17 +69,26 @@ that data can be managed in a single location.
 
 ## Test Reports
 
-Running the Playwright tests now creates Allure result files in
-`playwright/allure-results`. After the run you can generate a human-readable
-report using the provided npm script:
+1. **Run the tests first.** From the `playwright` directory execute:
 
-```bash
-npm run report:allure
-```
+   ```bash
+   npm test <dev|staging|prod>
+   ```
 
-The command produces an `allure-report` folder containing the HTML report. Open
-the report with:
+   This populates `playwright/allure-results` with the data used by the report.
 
-```bash
-npx allure open ./allure-report
-```
+2. **Generate the report** while still inside the `playwright` folder:
+
+   ```bash
+   npm run report:allure
+   ```
+
+   The command creates an `allure-report` folder containing the HTML output.
+   View it locally with:
+
+   ```bash
+   npx allure open ./allure-report
+   ```
+
+The report lists each test along with its pass/fail status, stack trace, and
+screenshot attachments captured by the hooks in `test-hooks.js`.
