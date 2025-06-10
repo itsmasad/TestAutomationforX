@@ -1,24 +1,11 @@
 // Import Playwright test APIs
 const { test, expect } = require('@playwright/test');
+const { faker } = require('@faker-js/faker');
 
 // Helper functions to generate random test data
-function randomEmail() {
-  const random = Math.random().toString(36).substring(2, 10);
-  return `user_${random}@yopmail.com`;
-}
-
 function randomPhone() {
   // Return a 9-digit phone number
   return `${Math.floor(100000000 + Math.random() * 900000000)}`;
-}
-
-function randomAlpha(length = 6) {
-  const letters = 'abcdefghijklmnopqrstuvwxyz';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += letters.charAt(Math.floor(Math.random() * letters.length));
-  }
-  return result;
 }
 
 function randomRegistrationNumber() {
@@ -39,12 +26,10 @@ function randomRegistrationNumber() {
 
 
 test('create company account', async ({ page, context }) => {
-  const email = randomEmail();
-
-  const randomSuffix = Date.now().toString().slice(-4);
-  const companyName = `Test Company ${randomSuffix}`;
-  const adminFirst = `Admin${randomAlpha(5)}`;
-  const adminLast = `User${randomAlpha(5)}`;
+  const adminFirst = faker.person.firstName();
+  const adminLast = faker.person.lastName();
+  const email = `${adminFirst.toLowerCase()}${faker.number.int({ min: 100, max: 999 })}@yopmail.com`;
+  const companyName = `${adminFirst} Limited ${faker.number.int({ min: 100, max: 999 })}`;
   const mobile = randomPhone();
   const password = 'xpendless@A1';
 
