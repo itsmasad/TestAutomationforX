@@ -93,3 +93,5 @@ that data can be managed in a single location.
 The report lists each test along with its pass/fail status and stack trace.
 If a test fails, the hooks in `test-hooks.js` capture a screenshot which is
 attached to the report.
+The report also records the browser used and which deployment environment
+(`dev`, `staging`, or `prod`) was targeted during the run.
