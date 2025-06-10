@@ -49,7 +49,7 @@ test('create company account', async ({ page, context }) => {
   const password = 'xpendless@A1';
 
   // Navigate to landing page and start registration flow
-  await page.goto('https://xpendless-frontend-staging-d6pkpujjuq-ww.a.run.app/');
+  await page.goto('/');
   await page.getByRole('link', { name: /create account for your company/i }).click();
 
   // Step 1: admin details
