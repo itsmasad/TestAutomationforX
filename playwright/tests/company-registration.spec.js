@@ -31,6 +31,7 @@ function randomAlpha(length = 6) {
 // 7. Choose the first subscription package and skip onboarding
 // 8. Verify that the dashboard is displayed
 
+
 test('create company account', async ({ page, context }) => {
   const email = randomEmail();
 
@@ -71,6 +72,7 @@ test('create company account', async ({ page, context }) => {
   // Step 3: mobile number
   await page.getByLabel(/mobile number/i).fill(mobile);
   await page.getByRole('button', { name: /continue|next/i }).click();
+
 
   // Step 4: confirm mobile OTP with static value
   await page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
