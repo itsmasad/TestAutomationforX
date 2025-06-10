@@ -8,7 +8,8 @@ function randomEmail() {
 }
 
 function randomPhone() {
-  return `080${Math.floor(10000000 + Math.random() * 9000000)}`;
+  // Return a 9-digit phone number
+  return `${Math.floor(100000000 + Math.random() * 900000000)}`;
 }
 
 function randomAlpha(length = 6) {
@@ -40,7 +41,7 @@ test('create company account', async ({ page, context }) => {
   const adminFirst = `Admin${randomAlpha(5)}`;
   const adminLast = `User${randomAlpha(5)}`;
   const mobile = randomPhone();
-  const password = 'Password@123';
+  const password = 'xpendless@A1';
 
   // Navigate to landing page and start registration flow
   await page.goto('https://xpendless-frontend-staging-d6pkpujjuq-ww.a.run.app/');
