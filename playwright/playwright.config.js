@@ -20,6 +20,7 @@ module.exports = defineConfig({
   // <— run only one worker (i.e. serial execution)
   workers: 1,
   timeout: 2 * 60 * 1000,         // 2 minutes
+  reporter: [ ['list'], ['./custom-reporter.js'] ],
   use: {
     headless: true,
     ignoreHTTPSErrors: true,

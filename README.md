@@ -66,3 +66,13 @@ If you accidentally run `npm test` from the repository root you will see an
 Reusable values such as login credentials and transaction amounts are defined in
 `playwright/testdata/index.js`. Tests and page objects import these constants so
 that data can be managed in a single location.
+
+## Test Reports
+
+Running the Playwright tests will automatically produce a JSON report in
+`playwright/report/report.json`. No extra command is required – the custom
+reporter is configured in `playwright.config.js` and runs every time you execute
+`npm test`. The report captures browser and environment information, the total
+time for the suite, and details for each test including duration, outcome and a
+path to its screenshot. Failed tests also include a short code snippet showing
+where the error occurred.
