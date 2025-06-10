@@ -107,10 +107,13 @@ test('create company account', async ({ page, context }) => {
   await page.getByRole('button', { name: /register/i }).click();
 
   // Choose the first subscription package
-  await page.getByRole('button', { name: /select plan|subscribe/i }).first().click();
+  
+  await page.getByRole('button', { name: /select plan|Get Subscription/i }).first().click();
+  await page.waitForTimeout(2000)
 
   // Skip onboarding screens if present
-  const skipButton = page.getByRole('button', { name: /skip/i });
+  // const skipButton = page.getByRole('div', { name: /skip/i });
+  const skipButton = page.getByText(/^skip$/i);
   if (await skipButton.isVisible()) {
     await skipButton.click();
   }

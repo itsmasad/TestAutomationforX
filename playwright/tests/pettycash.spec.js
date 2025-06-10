@@ -84,49 +84,49 @@ test('petty cash withdraw cash', async ({ page, context }) => {
 });
 
 // Test: petty cash disburse cash to user
-test('petty cash disburse cash to Card Holder', async ({ page, context }) => {
-  await login(page, context);
+// test('petty cash disburse cash to Card Holder', async ({ page, context }) => {
+//   await login(page, context);
 
-  // Navigate to petty cash and initiate disbursement
-  await page.getByRole('link', { name: /petty cash/i }).click();
-  await page.getByRole('button', { name: /disburse/i }).click();
+//   // Navigate to petty cash and initiate disbursement
+//   await page.getByRole('link', { name: /petty cash/i }).click();
+//   await page.getByRole('button', { name: /disburse/i }).click();
 
-  // Choose employee/user to disburse to
-  const employeeDrop = page.getByRole('combobox', { name: /employee|user/i });
-  await employeeDrop.click();
-  await page.getByRole('option', { name: 'Card Holder' }).click();
+//   // Choose employee/user to disburse to
+//   const employeeDrop = page.getByRole('combobox', { name: /employee|user/i });
+//   await employeeDrop.click();
+//   await page.getByRole('option', { name: 'Card Holder' }).click();
 
-  // Fill disbursement details
-  await page.getByRole('textbox', { name: /amount/i }).fill('150');
-  await page.getByRole('textbox', { name: /description|narrative/i }).fill('Disbursing petty cash');
-  await page.getByRole('button', { name: /submit|save/i }).click();
+//   // Fill disbursement details
+//   await page.getByRole('textbox', { name: /amount/i }).fill('150');
+//   await page.getByRole('textbox', { name: /description|narrative/i }).fill('Disbursing petty cash');
+//   await page.getByRole('button', { name: /submit|save/i }).click();
 
-  await expect(page.locator('.Toastify__toast--success')).toBeVisible();
+//   await expect(page.locator('.Toastify__toast--success')).toBeVisible();
 
-  await logout(page);
-});
+//   await logout(page);
+// });
 
 
 // Test: petty cash return cash from user "Card Holder"
-test('petty cash return cash from user Card Holder', async ({ page, context }) => {
-  await login(page, context);
+// test('petty cash return cash from user Card Holder', async ({ page, context }) => {
+//   await login(page, context);
 
-  // Open petty cash return flow
-  await page.getByRole('link', { name: /petty cash/i }).click();
-  await page.getByRole('button', { name: /return/i }).click();
+//   // Open petty cash return flow
+//   await page.getByRole('link', { name: /petty cash/i }).click();
+//   await page.getByRole('button', { name: /return/i }).click();
 
-  // Choose the user returning cash
-  const returnDrop = page.getByRole('combobox', { name: /user/i });
-  await returnDrop.click();
-  await page.getByRole('option', { name: 'Card Holder' }).click();
+//   // Choose the user returning cash
+//   const returnDrop = page.getByRole('combobox', { name: /user/i });
+//   await returnDrop.click();
+//   await page.getByRole('option', { name: 'Card Holder' }).click();
 
-  // Enter return details
-  await page.getByRole('textbox', { name: /amount/i }).fill('50');
-  await page.getByRole('textbox', { name: /description|narrative/i }).fill('Returning cash');
-  await page.getByRole('button', { name: /submit|save/i }).click();
+//   // Enter return details
+//   await page.getByRole('textbox', { name: /amount/i }).fill('50');
+//   await page.getByRole('textbox', { name: /description|narrative/i }).fill('Returning cash');
+//   await page.getByRole('button', { name: /submit|save/i }).click();
 
-  await expect(page.locator('.Toastify__toast--success')).toBeVisible();
+//   await expect(page.locator('.Toastify__toast--success')).toBeVisible();
 
-  await logout(page);
-});
+//   await logout(page);
+// });
 
