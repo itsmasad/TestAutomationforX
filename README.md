@@ -76,6 +76,8 @@ that data can be managed in a single location.
    ```
 
    This populates `playwright/allure-results` with the data used by the report.
+   The reporter always writes to this folder so the command works even
+   when tests are started from another directory.
 
 2. **Generate the report** while still inside the `playwright` folder:
 

@@ -8,6 +8,9 @@ const envUrls = {
   prod: process.env.PROD_URL,
 };
 
+// Store allure results inside this project regardless of cwd
+const resultsFolder = path.join(__dirname, 'allure-results');
+
 // The environment to run against is provided by the wrapper script `run-tests.js`
 // which sets `CURRENT_ENV`. For backwards compatibility we also read
 // `npm_config_env` when the script is invoked with `--env`.
@@ -20,7 +23,7 @@ module.exports = defineConfig({
   // <— run only one worker (i.e. serial execution)
   workers: 1,
   timeout: 2 * 60 * 1000,         // 2 minutes
-  reporter: [ ['list'], ['allure-playwright'] ],
+  reporter: [ ['list'], ['allure-playwright', { outputFolder: resultsFolder }] ],
   use: {
     headless: true,
     ignoreHTTPSErrors: true,
