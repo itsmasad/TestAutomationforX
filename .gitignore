@@ -3,3 +3,5 @@ venv/
 **/node_modules/
 playwright/test-results/
 playwright/report/
+playwright/allure-results/
+playwright/allure-report/
