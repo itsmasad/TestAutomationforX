@@ -24,10 +24,13 @@ function randomAlpha(length = 6) {
 // Steps reflect the current signup process:
 // 1. Enter admin details (first name, last name, email)
 // 2. Retrieve the email verification OTP from Yopmail
-// 3. Enter company information and mobile number
+// 3. Provide mobile number
 // 4. Confirm the mobile OTP using static code '123456'
-// 5. Choose the first subscription package and skip onboarding
-// 6. Verify that the dashboard is displayed
+// 5. Set password and confirm password
+// 6. Enter business information
+// 7. Choose the first subscription package and skip onboarding
+// 8. Verify that the dashboard is displayed
+
 
 test('create company account', async ({ page, context }) => {
   const email = randomEmail();
@@ -66,12 +69,10 @@ test('create company account', async ({ page, context }) => {
   }
   await page.getByRole('button', { name: /continue|verify|confirm/i }).click();
 
-  // Step 3: company information
-  await page.getByLabel(/business name/i).fill(companyName);
+  // Step 3: mobile number
   await page.getByLabel(/mobile number/i).fill(mobile);
-  await page.getByLabel(/password/i).fill(password);
-  await page.getByLabel(/confirm password/i).fill(password);
-  await page.getByRole('button', { name: /create account|continue/i }).click();
+  await page.getByRole('button', { name: /continue|next/i }).click();
+
 
   // Step 4: confirm mobile OTP with static value
   await page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
@@ -80,6 +81,15 @@ test('create company account', async ({ page, context }) => {
     await page.getByRole('textbox', { name: `Please enter OTP character ${i + 1}` }).fill(otpDigits[i]);
   }
   await page.getByRole('button', { name: /continue|confirm|verify/i }).click();
+
+  // Step 5: set password
+  await page.getByLabel(/password/i).fill(password);
+  await page.getByLabel(/confirm password/i).fill(password);
+  await page.getByRole('button', { name: /continue|create account/i }).click();
+
+  // Step 6: business information
+  await page.getByLabel(/business name/i).fill(companyName);
+  await page.getByRole('button', { name: /create account|continue/i }).click();
 
   // Choose the first subscription package
   await page.getByRole('button', { name: /select plan|subscribe/i }).first().click();
