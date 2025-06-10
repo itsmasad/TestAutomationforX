@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('../test-hooks');
 const { CompanyRegistrationPage } = require('../pages/company-registration-page');
 
 // This test covers the full company sign-up process
