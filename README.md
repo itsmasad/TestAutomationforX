@@ -69,10 +69,17 @@ that data can be managed in a single location.
 
 ## Test Reports
 
-Running the Playwright tests will automatically produce a JSON report in
-`playwright/report/report.json`. No extra command is required – the custom
-reporter is configured in `playwright.config.js` and runs every time you execute
-`npm test`. The report captures browser and environment information, the total
-time for the suite, and details for each test including duration, outcome and a
-path to its screenshot. Failed tests also include a short code snippet showing
-where the error occurred.
+Running the Playwright tests now creates Allure result files in
+`playwright/allure-results`. After the run you can generate a human-readable
+report using the provided npm script:
+
+```bash
+npm run report:allure
+```
+
+The command produces an `allure-report` folder containing the HTML report. Open
+the report with:
+
+```bash
+npx allure open ./allure-report
+```
