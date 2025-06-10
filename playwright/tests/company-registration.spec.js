@@ -83,6 +83,10 @@ test('create company account', async ({ page, context }) => {
   }
   await page.getByRole('button', { name: /continue|confirm|verify/i }).click();
 
+  // Wait for password fields to appear before continuing
+  await page.getByLabel(/password/i).waitFor();
+
+
   // Step 5: set password
   await page.getByLabel(/password/i).fill(password);
   await page.getByLabel(/confirm password/i).fill(password);
