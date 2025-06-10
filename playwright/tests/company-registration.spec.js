@@ -1,10 +1,15 @@
 // Import Playwright test APIs
 const { test, expect } = require('@playwright/test');
 
-// Helper to generate random test data
-function generateRandomEmail() {
-  const random = Math.random().toString(36).substring(2, 8);
-  return `test_${random}@yopmail.com`;
+// Helper functions to generate random test data
+function randomEmail() {
+  const random = Math.random().toString(36).substring(2, 10);
+  return `user_${random}@yopmail.com`;
+}
+
+function randomPhone() {
+  return `080${Math.floor(10000000 + Math.random() * 9000000)}`;
+
 }
 
 // Test: company registration flow
@@ -15,16 +20,19 @@ function generateRandomEmail() {
 // - verifies that dashboard is shown after registration
 
 test('create company account', async ({ page }) => {
-  const email = generateRandomEmail();
+  const email = randomEmail();
+
   const randomSuffix = Date.now().toString().slice(-4);
   const companyName = `Test Company ${randomSuffix}`;
   const adminFirst = `Admin${randomSuffix}`;
   const adminLast = `User${randomSuffix}`;
-  const mobile = `080${Math.floor(Math.random() * 9000000 + 1000000)}`;
+  const mobile = randomPhone();
   const password = 'Password@123';
 
-  // Navigate to the registration page
-  await page.goto('https://xpendless-frontend-staging-d6pkpujjuq-ww.a.run.app/create-account');
+  // Navigate to landing page and start registration flow
+  await page.goto('https://xpendless-frontend-staging-d6pkpujjuq-ww.a.run.app/');
+  await page.getByRole('link', { name: /create account for your company/i }).click();
+
 
   // Fill company details
   await page.getByLabel(/business name/i).fill(companyName);
