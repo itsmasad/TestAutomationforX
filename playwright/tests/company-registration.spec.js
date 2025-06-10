@@ -9,6 +9,7 @@ function randomEmail() {
 
 function randomPhone() {
   return `080${Math.floor(10000000 + Math.random() * 9000000)}`;
+
 }
 
 // Test: company registration flow
@@ -20,6 +21,7 @@ function randomPhone() {
 
 test('create company account', async ({ page }) => {
   const email = randomEmail();
+
   const randomSuffix = Date.now().toString().slice(-4);
   const companyName = `Test Company ${randomSuffix}`;
   const adminFirst = `Admin${randomSuffix}`;
@@ -30,6 +32,7 @@ test('create company account', async ({ page }) => {
   // Navigate to landing page and start registration flow
   await page.goto('https://xpendless-frontend-staging-d6pkpujjuq-ww.a.run.app/');
   await page.getByRole('link', { name: /create account for your company/i }).click();
+
 
   // Fill company details
   await page.getByLabel(/business name/i).fill(companyName);
