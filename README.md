@@ -94,4 +94,8 @@ The report lists each test along with its pass/fail status and stack trace.
 If a test fails, the hooks in `test-hooks.js` capture a screenshot which is
 attached to the report.
 The report also records the browser used and which deployment environment
-(`dev`, `staging`, or `prod`) was targeted during the run.
+(`dev`, `staging`, or `prod`) was targeted during the run. This information is
+written automatically when the tests start in `global-setup.js`. As long as you
+launch the suite via `npm test <env>` (or set `CURRENT_ENV` when calling
+`npx playwright test`), the generated Allure report will include the environment
+and browser details.
