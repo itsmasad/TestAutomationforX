@@ -100,11 +100,11 @@ test('create company account', async ({ page, context }) => {
   await page.getByRole('button', { name: /continue|create account/i }).click();
 
   // Step 7: business information
-  await page.getByLabel(/business name/i).waitFor();
-  await page.getByLabel(/business name/i).fill(companyName);
+  await page.getByLabel(/company name/i).waitFor();
+  await page.getByLabel(/company name/i).fill(companyName);
   const regNo = randomRegistrationNumber();
   await page.getByLabel(/registration number/i).fill(regNo);
-  await page.getByRole('button', { name: /register|create account|continue/i }).click();
+  await page.getByRole('button', { name: /register/i }).click();
 
   // Choose the first subscription package
   await page.getByRole('button', { name: /select plan|subscribe/i }).first().click();
