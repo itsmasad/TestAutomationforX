@@ -5,7 +5,7 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const envUrls = {
   dev: process.env.DEV_URL,
   staging: process.env.STAGING_URL,
-  production: process.env.PROD_URL,
+  prod: process.env.PROD_URL,
 };
 
 // The environment to run against is provided by the wrapper script `run-tests.js`

@@ -113,7 +113,7 @@ test('create company account', async ({ page, context }) => {
 
   // Skip onboarding screens if present
   // const skipButton = page.getByRole('div', { name: /skip/i });
-  const skipButton = page.getByText(/^skip$/i);
+  const skipButton = page.getByText(/^Skip$/i);
   if (await skipButton.isVisible()) {
     await skipButton.click();
   }
