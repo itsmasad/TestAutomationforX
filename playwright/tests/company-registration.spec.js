@@ -83,16 +83,17 @@ test('create company account', async ({ page, context }) => {
   }
   await page.getByRole('button', { name: /continue|confirm|verify/i }).click();
 
-  // Wait for password fields to appear before continuing
-  await page.getByLabel(/password/i).waitFor();
+  // Wait for the password inputs to be visible
+  const passwordInputs = page.locator('input[type="password"]');
+  await passwordInputs.first().waitFor();
 
-
-  // Step 5: set password
-  await page.getByLabel(/password/i).fill(password);
-  await page.getByLabel(/confirm password/i).fill(password);
+  // Step 5: set password using the two password inputs
+  await passwordInputs.nth(0).fill(password);
+  await passwordInputs.nth(1).fill(password);
   await page.getByRole('button', { name: /continue|create account/i }).click();
 
   // Step 6: business information
+  await page.getByLabel(/business name/i).waitFor();
   await page.getByLabel(/business name/i).fill(companyName);
   await page.getByRole('button', { name: /create account|continue/i }).click();
 
