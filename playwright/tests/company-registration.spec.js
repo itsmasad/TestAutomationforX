@@ -8,7 +8,8 @@ function randomEmail() {
 }
 
 function randomPhone() {
-  return `080${Math.floor(10000000 + Math.random() * 9000000)}`;
+  // Return a 9-digit phone number
+  return `${Math.floor(100000000 + Math.random() * 900000000)}`;
 }
 
 function randomAlpha(length = 6) {
@@ -32,7 +33,7 @@ function randomAlpha(length = 6) {
 // 8. Verify that the dashboard is displayed
 
 
-test('create company account', async ({ page, context }) => {
+  const password = 'xpendless@A1';
   const email = randomEmail();
 
   const randomSuffix = Date.now().toString().slice(-4);
