@@ -60,3 +60,9 @@ npm test prod
 If you accidentally run `npm test` from the repository root you will see an
 `Error: no test specified` message. Always run the command inside the
 `playwright` folder where the `package.json` file lives.
+
+## Test Data
+
+Reusable values such as login credentials and transaction amounts are defined in
+`playwright/testdata/index.js`. Tests and page objects import these constants so
+that data can be managed in a single location.
