@@ -9,7 +9,15 @@ function randomEmail() {
 
 function randomPhone() {
   return `080${Math.floor(10000000 + Math.random() * 9000000)}`;
+}
 
+function randomAlpha(length = 6) {
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += letters.charAt(Math.floor(Math.random() * letters.length));
+  }
+  return result;
 }
 
 // Test: company registration flow
@@ -26,8 +34,8 @@ test('create company account', async ({ page, context }) => {
 
   const randomSuffix = Date.now().toString().slice(-4);
   const companyName = `Test Company ${randomSuffix}`;
-  const adminFirst = `Admin${randomSuffix}`;
-  const adminLast = `User${randomSuffix}`;
+  const adminFirst = `Admin${randomAlpha(5)}`;
+  const adminLast = `User${randomAlpha(5)}`;
   const mobile = randomPhone();
   const password = 'Password@123';
 
