@@ -17,4 +17,4 @@ jobs:
           node-version: 18
       - run: npm ci
       - run: npx playwright install chrome
-      - run: npm test staging --browser=chrome
+      - run: npm test staging --browser=chrome -- --reporter=line
