@@ -18,3 +18,10 @@ jobs:
       - run: npm ci
       - run: npx playwright install chrome
       - run: npm test staging --browser=chrome -- --reporter=line
+      - name: Generate Allure report
+        run: npm run report:allure
+      - name: Upload Allure report
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-report
+          path: playwright/allure-report
