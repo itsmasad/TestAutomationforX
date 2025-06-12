@@ -18,6 +18,7 @@ class CompanyVerificationPage {
   async fillCompanyDetails() {
     // Wait for the form fields to be available then populate them
     await this.page.locator('#addressLine1').waitFor();
+
     await this.page.locator('#addressLine1').fill(testData.company.addressLine1);
     await this.page.locator('#addressLine2').fill(testData.company.addressLine2);
     await this.page.locator('#city').fill(testData.company.city);
