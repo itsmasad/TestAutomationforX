@@ -22,6 +22,7 @@ jobs:
         run: npm run report:allure
       - name: Upload Allure report
         uses: actions/upload-artifact@v4
+
         with:
           name: allure-report
           path: playwright/allure-report
