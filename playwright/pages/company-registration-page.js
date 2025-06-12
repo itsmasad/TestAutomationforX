@@ -79,7 +79,7 @@ class CompanyRegistrationPage {
 
     // Some flows allow skipping the subscription selection
     const skipButton = this.page.getByText(/^Skip$/i);
-    // await skipButton.waitFor({ state: 'visible', timeout: 15000 });
+    await skipButton.waitFor({ state: 'visible', timeout: 15000 });
     // if (await skipButton.isVisible()) {
     //   await skipButton.click();
     // }
