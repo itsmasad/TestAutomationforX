@@ -23,10 +23,10 @@ class CompanyVerificationPage {
     await this.page.locator('#addressLine2').fill(testData.company.addressLine2);
     await this.page.locator('#city').fill(testData.company.city);
     await this.page.pause();
-    // await this.page.locator('#phoneNumber').waitFor();
-    await this.page.locator('#phoneNumber').fill(testData.company.phone);
+    // Use more specific locators as the page contains duplicate ids
+    await this.page.locator('input[name="companyPhone"]').fill(testData.company.phone);
     await this.page.locator('#emailAddress').fill(testData.company.email);
-    // await this.page.locator('#postalCode').fill(testData.company.postalCode);
+    await this.page.locator('input[name="postalCode"]').fill(testData.company.postalCode);
     // const next = this.page.getByRole('button', { name: /next/i });
     // await next.waitFor();
     // await next.click();
