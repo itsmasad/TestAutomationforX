@@ -22,11 +22,13 @@ class CompanyVerificationPage {
     await this.page.locator('#addressLine1').fill(testData.company.addressLine1);
     await this.page.locator('#addressLine2').fill(testData.company.addressLine2);
     await this.page.locator('#city').fill(testData.company.city);
-    await this.page.locator('#postalCode').waitFor();
     await this.page.locator('#postalCode').fill(testData.company.postalCode);
+    await this.page.locator('#phoneNumber').waitFor();
     await this.page.locator('#phoneNumber').fill(testData.company.phone);
     await this.page.locator('#emailAddress').fill(testData.company.email);
-    await this.page.getByRole('button', { name: /next/i }).click();
+    const next = this.page.getByRole('button', { name: /next/i });
+    await next.waitFor();
+    await next.click();
   }
 
   /** Fill usage information step and proceed. */
