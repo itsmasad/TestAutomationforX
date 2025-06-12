@@ -16,12 +16,14 @@ class CompanyVerificationPage {
 
   /** Fill the first step of company details and proceed. */
   async fillCompanyDetails() {
+    // Wait for the form fields to be available then populate them
+    await this.page.locator('#addressLine1').waitFor();
     await this.page.locator('#addressLine1').fill(testData.company.addressLine1);
     await this.page.locator('#addressLine2').fill(testData.company.addressLine2);
     await this.page.locator('#city').fill(testData.company.city);
     await this.page.locator('#postalCode').fill(testData.company.postalCode);
-    await this.page.locator('#companyPhone').fill(testData.company.phone);
-    await this.page.locator('#companyEmail').fill(testData.company.email);
+    await this.page.locator('#phoneNumber').fill(testData.company.phone);
+    await this.page.locator('#emailAddress').fill(testData.company.email);
     await this.page.getByRole('button', { name: /next/i }).click();
   }
 
