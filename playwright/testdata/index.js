@@ -28,5 +28,11 @@ module.exports = {
   },
   company: {
     password: 'xpendless@A1',
+    addressLine1: '123 Verification St',
+    addressLine2: 'Suite 5',
+    city: 'Nairobi',
+    postalCode: '00100',
+    phone: '0712345678',
+    email: 'testcompany@yopmail.com',
   },
 };
