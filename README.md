@@ -99,3 +99,7 @@ written automatically when the tests start in `global-setup.js`. As long as you
 launch the suite via `npm test <env>` (or set `CURRENT_ENV` when calling
 `npx playwright test`), the generated Allure report will include the environment
 and browser details.
+
+## Continuous Integration
+
+The Playwright test suite runs automatically on GitHub Actions after changes are merged into the `main` branch. The workflow file is located at `.github/workflows/playwright.yml` and executes the suite on a Windows runner using the Chrome browser.
