@@ -75,13 +75,15 @@ class CompanyRegistrationPage {
     await this.page.getByRole('button', { name: /register/i }).click();
 
     await this.page.getByRole('button', { name: /select plan|Get Subscription/i }).first().click();
-    await this.page.waitForTimeout(10000);
+    // await this.page.waitForTimeout(10000);
 
     // Some flows allow skipping the subscription selection
     const skipButton = this.page.getByText(/^Skip$/i);
-    if (await skipButton.isVisible()) {
-      await skipButton.click();
-    }
+    // await skipButton.waitFor({ state: 'visible', timeout: 15000 });
+    // if (await skipButton.isVisible()) {
+    //   await skipButton.click();
+    // }
+    await skipButton.click();
 
     await this.page.getByRole('link', { name: /dashboard/i }).waitFor();
   }
