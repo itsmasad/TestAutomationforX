@@ -102,4 +102,4 @@ and browser details.
 
 ## Continuous Integration
 
-The Playwright test suite runs automatically on GitHub Actions after changes are merged into the `main` branch. The workflow file is located at `.github/workflows/playwright.yml` and executes the suite on a Windows runner using the Chrome browser.
+The Playwright test suite runs automatically on GitHub Actions after changes are merged into the `main` branch. The workflow file is located at `.github/workflows/playwright.yml` and executes the suite on a Windows runner using the Chrome browser. After each run, the job uploads the generated `allure-report` directory as a downloadable artifact so you can view the HTML results from the workflow page.
