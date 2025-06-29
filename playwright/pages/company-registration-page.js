@@ -25,6 +25,7 @@ class CompanyRegistrationPage {
     const email = `${adminFirst.toLowerCase()}${faker.number.int({ min: 100, max: 999 })}@yopmail.com`;
     const companyName = `${adminFirst} Limited ${faker.number.int({ min: 100, max: 999 })}`;
     const mobile = `${Math.floor(100000000 + Math.random() * 900000000)}`;
+    this.mobile = mobile;
     const password = testData.company.password;
 
     // Begin registration on the landing page

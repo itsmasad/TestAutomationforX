@@ -4,9 +4,11 @@ const testData = require('../testdata');
 class CompanyVerificationPage {
   /**
    * @param {import('@playwright/test').Page} page
+   * @param {string} [phone=testData.company.phone] - Phone number for verification
    */
-  constructor(page) {
+  constructor(page, phone = testData.company.phone) {
     this.page = page;
+    this.phone = phone;
   }
 
   /** Navigate to the company verification page. */
@@ -24,7 +26,7 @@ class CompanyVerificationPage {
     await this.page.locator('#city').fill(testData.company.city);
     
     // Use more specific locators as the page contains duplicate ids
-    await this.page.locator('input[name="companyPhone"]').fill(testData.company.phone);
+    await this.page.locator('input[name="companyPhone"]').fill(this.phone);
     await this.page.locator('#emailAddress').fill(testData.company.email);
     await this.page.locator('input[name="postalCode"]').fill(testData.company.postalCode);
     const next = this.page.getByRole('button', { name: /next/i });
