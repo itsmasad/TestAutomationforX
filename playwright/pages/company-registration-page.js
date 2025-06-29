@@ -20,8 +20,8 @@ class CompanyRegistrationPage {
    */
   async registerCompany() {
     // Generate basic details for the administrator and company
-    const adminFirst = faker.person.firstName();
-    const adminLast = faker.person.lastName();
+    const adminFirst = faker.person.firstName().replace(/[^a-zA-Z]/g, '');
+    const adminLast = faker.person.lastName().replace(/[^a-zA-Z]/g, '');
     const email = `${adminFirst.toLowerCase()}${faker.number.int({ min: 100, max: 999 })}@yopmail.com`;
     const companyName = `${adminFirst} Limited ${faker.number.int({ min: 100, max: 999 })}`;
     const mobile = `${Math.floor(100000000 + Math.random() * 900000000)}`;

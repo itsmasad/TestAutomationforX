@@ -51,11 +51,9 @@ class CompanyVerificationPage {
     }
     // Some environments may render multiple "Next" buttons. Wait for the
     // visible, enabled one before clicking so that the flow reliably advances.
-    const nextButton = this.page.getByRole('button', { name: /next/i });
+    const nextButton = this.page.getByRole('button', { name: /^next$/i }).first();
     await nextButton.waitFor({ state: 'visible' });
-    // If the button is disabled until the dropdown selections are processed,
-    // wait for it to become enabled.
-    await this.page.waitForFunction(btn => !btn.disabled, nextButton);
+    await nextButton.waitFor({ state: 'enabled' });
     await nextButton.click();
   }
 
