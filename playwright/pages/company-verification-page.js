@@ -59,19 +59,29 @@ class CompanyVerificationPage {
   async uploadDocuments() {
     const doc1 = path.join(__dirname, '../testdata/doc1.pdf');
     const doc2 = path.join(__dirname, '../testdata/doc2.pdf');
+
     const inputs = this.page.locator('input[type="file"]');
+    await inputs.first().waitFor();
     const count = await inputs.count();
 
     if (count === 1) {
       // Single input allows multiple files
       await inputs.setInputFiles([doc1, doc2], { noWaitAfter: true });
     } else {
-      await inputs.nth(0).setInputFiles(doc1, { noWaitAfter: true });
+      // Upload the first document
+      await inputs.first().setInputFiles(doc1, { noWaitAfter: true });
 
       if (count > 1) {
         const second = inputs.nth(1);
-        // Upload the second document without waiting for network
-        await second.setInputFiles(doc2, { noWaitAfter: true });
+        try {
+          // Wait briefly for the second field to appear
+          await second.waitFor({ state: 'visible', timeout: 5000 });
+          await second.setInputFiles(doc2, { noWaitAfter: true });
+        } catch {
+          // Fallback: first input may accept multiple files
+          await inputs.first().setInputFiles([doc1, doc2], { noWaitAfter: true });
+        }
+
       }
     }
     await this.page.getByRole('button', { name: /next/i }).click();
