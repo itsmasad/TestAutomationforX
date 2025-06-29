@@ -60,15 +60,19 @@ class CompanyVerificationPage {
     const doc1 = path.join(__dirname, '../testdata/doc1.pdf');
     const doc2 = path.join(__dirname, '../testdata/doc2.pdf');
     const inputs = this.page.locator('input[type="file"]');
-    // await inputs.first().waitFor();
     const count = await inputs.count();
+
     if (count === 1) {
       // Single input allows multiple files
       await inputs.setInputFiles([doc1, doc2]);
     } else {
       await inputs.nth(0).setInputFiles(doc1);
+
       if (count > 1) {
-        await inputs.nth(1).setInputFiles(doc2);
+        const second = inputs.nth(1);
+        // Wait for the second field to be ready before uploading
+        await second.waitFor({ state: 'visible' });
+        await second.setInputFiles(doc2);
       }
     }
     await this.page.getByRole('button', { name: /next/i }).click();
@@ -78,7 +82,6 @@ class CompanyVerificationPage {
   async completeVerification() {
     await this.open();
     await this.fillCompanyDetails();
-    await this.page.pause();
     await this.fillUsageDetails();
     await this.uploadDocuments();
   }
