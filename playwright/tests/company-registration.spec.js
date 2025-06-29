@@ -25,7 +25,7 @@ test.describe.serial('company onboarding', () => {
     await regPage.registerCompany();
     await expect(page.getByRole('link', { name: /dashboard/i })).toBeVisible();
 
-    const verifyPage = new CompanyVerificationPage(page);
+    const verifyPage = new CompanyVerificationPage(page, regPage.mobile);
     // debugger;
     await verifyPage.completeVerification();
   });
