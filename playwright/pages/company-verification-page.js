@@ -49,7 +49,14 @@ class CompanyVerificationPage {
       const value = await choice.getAttribute('value');
       await select.selectOption(value ?? { index: 0 });
     }
-    await this.page.getByRole('button', { name: /next/i }).click();
+    // Some environments may render multiple "Next" buttons. Wait for the
+    // visible, enabled one before clicking so that the flow reliably advances.
+    const nextButton = this.page.getByRole('button', { name: /next/i });
+    await nextButton.waitFor({ state: 'visible' });
+    // If the button is disabled until the dropdown selections are processed,
+    // wait for it to become enabled.
+    await this.page.waitForFunction(btn => !btn.disabled, nextButton);
+    await nextButton.click();
   }
 
   /** Upload two verification documents and proceed. */
