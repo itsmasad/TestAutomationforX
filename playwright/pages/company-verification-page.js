@@ -20,7 +20,6 @@ class CompanyVerificationPage {
   async fillCompanyDetails() {
     // Wait for the form fields to be available then populate them
     await this.page.locator('#addressLine1').waitFor();
-    await this.page.pause();
     await this.page.locator('#addressLine1').fill(testData.company.addressLine1);
     await this.page.locator('#addressLine2').fill(testData.company.addressLine2);
     await this.page.locator('#city').fill(testData.company.city);
@@ -35,8 +34,19 @@ class CompanyVerificationPage {
 
   /** Fill usage information step and proceed. */
   async fillUsageDetails() {
-    await this.page.getByLabel(/company size/i).selectOption('1-10');
-    await this.page.getByLabel(/expected transactions/i).fill('100');
+    // The usage page contains three drop downs. Select a random option from
+    // each to avoid assumptions about the available values.
+    const dropdowns = this.page.locator('form select');
+    const count = await dropdowns.count();
+    for (let i = 0; i < Math.min(count, 3); i++) {
+      const select = dropdowns.nth(i);
+      await select.waitFor();
+      const options = await select.locator('option').all();
+      if (options.length === 0) continue;
+      const choice = options[Math.floor(Math.random() * options.length)];
+      const value = await choice.getAttribute('value');
+      await select.selectOption(value ?? { index: 0 });
+    }
     await this.page.getByRole('button', { name: /next/i }).click();
   }
 
@@ -54,7 +64,7 @@ class CompanyVerificationPage {
   async completeVerification() {
     await this.open();
     await this.fillCompanyDetails();
-    // await this.fillUsageDetails();
+    await this.fillUsageDetails();
     // await this.uploadDocuments();
   }
 }
