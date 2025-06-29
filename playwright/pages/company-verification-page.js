@@ -64,15 +64,14 @@ class CompanyVerificationPage {
 
     if (count === 1) {
       // Single input allows multiple files
-      await inputs.setInputFiles([doc1, doc2]);
+      await inputs.setInputFiles([doc1, doc2], { noWaitAfter: true });
     } else {
-      await inputs.nth(0).setInputFiles(doc1);
+      await inputs.nth(0).setInputFiles(doc1, { noWaitAfter: true });
 
       if (count > 1) {
         const second = inputs.nth(1);
-        // Wait for the second field to be ready before uploading
-        await second.waitFor({ state: 'visible' });
-        await second.setInputFiles(doc2);
+        // Upload the second document without waiting for network
+        await second.setInputFiles(doc2, { noWaitAfter: true });
       }
     }
     await this.page.getByRole('button', { name: /next/i }).click();
