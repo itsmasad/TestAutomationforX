@@ -60,15 +60,15 @@ class CompanyVerificationPage {
     const doc1 = path.join(__dirname, '../testdata/doc1.pdf');
     const doc2 = path.join(__dirname, '../testdata/doc2.pdf');
 
-    const inputs = this.page.locator('input[type="file"]');
-    const firstInput = inputs.first();
+    // File inputs live under the upload icon elements
+    const firstInput = this.page.locator("(//div[@class='upload-icon'])[1]//input[@type='file']");
+    const secondInput = this.page.locator("(//div[@class='upload-icon'])[2]//input[@type='file']");
+
     await firstInput.waitFor();
-    const inputCount = await inputs.count();
 
     // Upload the documents. Prefer two separate fields when available
-    if (inputCount > 1) {
+    if (await secondInput.count()) {
       await firstInput.setInputFiles(doc1, { noWaitAfter: true });
-      const secondInput = inputs.nth(1);
       try {
         await secondInput.waitFor({ state: 'visible', timeout: 5000 });
         await secondInput.setInputFiles(doc2, { noWaitAfter: true });
