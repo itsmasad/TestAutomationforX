@@ -20,6 +20,8 @@ class CompanyVerificationPage {
   async fillCompanyDetails() {
     // Wait for the form fields to be available then populate them
     await this.page.locator('#addressLine1').waitFor();
+    // Give the page a moment before typing the address information
+    await this.page.waitForTimeout(2000);
     await this.page.locator('#addressLine1').fill(testData.company.addressLine1);
     await this.page.locator('#addressLine2').fill(testData.company.addressLine2);
     await this.page.locator('#city').fill(testData.company.city);
@@ -55,8 +57,17 @@ class CompanyVerificationPage {
     const doc1 = path.join(__dirname, '../testdata/doc1.pdf');
     const doc2 = path.join(__dirname, '../testdata/doc2.pdf');
     const inputs = this.page.locator('input[type="file"]');
-    await inputs.nth(0).setInputFiles(doc1);
-    await inputs.nth(1).setInputFiles(doc2);
+    await inputs.first().waitFor();
+    const count = await inputs.count();
+    if (count === 1) {
+      // Single input allows multiple files
+      await inputs.setInputFiles([doc1, doc2]);
+    } else {
+      await inputs.nth(0).setInputFiles(doc1);
+      if (count > 1) {
+        await inputs.nth(1).setInputFiles(doc2);
+      }
+    }
     await this.page.getByRole('button', { name: /next/i }).click();
   }
 
@@ -65,7 +76,7 @@ class CompanyVerificationPage {
     await this.open();
     await this.fillCompanyDetails();
     await this.fillUsageDetails();
-    // await this.uploadDocuments();
+    await this.uploadDocuments();
   }
 }
 
