@@ -61,30 +61,33 @@ class CompanyVerificationPage {
     const doc2 = path.join(__dirname, '../testdata/doc2.pdf');
 
     const inputs = this.page.locator('input[type="file"]');
-    await inputs.first().waitFor();
-    const count = await inputs.count();
+    const firstInput = inputs.first();
+    await firstInput.waitFor();
+    const inputCount = await inputs.count();
 
-    if (count === 1) {
-      // Single input allows multiple files
-      await inputs.setInputFiles([doc1, doc2], { noWaitAfter: true });
-    } else {
-      // Upload the first document
-      await inputs.first().setInputFiles(doc1, { noWaitAfter: true });
-
-      if (count > 1) {
-        const second = inputs.nth(1);
-        try {
-          // Wait briefly for the second field to appear
-          await second.waitFor({ state: 'visible', timeout: 5000 });
-          await second.setInputFiles(doc2, { noWaitAfter: true });
-        } catch {
-          // Fallback: first input may accept multiple files
-          await inputs.first().setInputFiles([doc1, doc2], { noWaitAfter: true });
-        }
-
+    // Upload the documents. Prefer two separate fields when available
+    if (inputCount > 1) {
+      await firstInput.setInputFiles(doc1, { noWaitAfter: true });
+      const secondInput = inputs.nth(1);
+      try {
+        await secondInput.waitFor({ state: 'visible', timeout: 5000 });
+        await secondInput.setInputFiles(doc2, { noWaitAfter: true });
+      } catch {
+        // If the second field never appears, fall back to a single input
+        await firstInput.setInputFiles([doc1, doc2], { noWaitAfter: true });
       }
+    } else {
+      // Single input accepting multiple files
+      await firstInput.setInputFiles([doc1, doc2], { noWaitAfter: true });
     }
-    await this.page.getByRole('button', { name: /next/i }).click();
+
+    // Prefer an id-based locator for the next button when present
+    const nextById = this.page.locator('#documents_next');
+    if (await nextById.count()) {
+      await nextById.click();
+    } else {
+      await this.page.getByRole('button', { name: /next/i }).click();
+    }
   }
 
   /** Complete all verification steps. */
