@@ -48,12 +48,10 @@ class CompanyVerificationPage {
       const choice = options[Math.floor(Math.random() * options.length)];
       const value = await choice.getAttribute('value');
       await select.selectOption(value ?? { index: 0 });
-    }
+    };
     // Some environments may render multiple "Next" buttons. Wait for the
     // visible, enabled one before clicking so that the flow reliably advances.
-    const nextButton = this.page.getByRole('button', { name: /^next$/i }).first();
-    await nextButton.waitFor({ state: 'visible' });
-    await nextButton.waitFor({ state: 'enabled' });
+    const nextButton = this.page.locator('#usage_next');
     await nextButton.click();
   }
 
@@ -62,7 +60,7 @@ class CompanyVerificationPage {
     const doc1 = path.join(__dirname, '../testdata/doc1.pdf');
     const doc2 = path.join(__dirname, '../testdata/doc2.pdf');
     const inputs = this.page.locator('input[type="file"]');
-    await inputs.first().waitFor();
+    // await inputs.first().waitFor();
     const count = await inputs.count();
     if (count === 1) {
       // Single input allows multiple files
@@ -80,6 +78,7 @@ class CompanyVerificationPage {
   async completeVerification() {
     await this.open();
     await this.fillCompanyDetails();
+    await this.page.pause();
     await this.fillUsageDetails();
     await this.uploadDocuments();
   }
