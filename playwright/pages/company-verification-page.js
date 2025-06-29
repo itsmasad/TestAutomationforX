@@ -81,6 +81,7 @@ class CompanyVerificationPage {
           // Fallback: first input may accept multiple files
           await inputs.first().setInputFiles([doc1, doc2], { noWaitAfter: true });
         }
+
       }
     }
     await this.page.getByRole('button', { name: /next/i }).click();
