@@ -33,6 +33,7 @@ test.describe.serial('company onboarding', () => {
     // After verification steps navigate to the Odoo staging environment
     const odoo = new OdooPage(page);
     await odoo.goto();
+    await odoo.login();
     await odoo.openKybMyPipelines();
   });
 });

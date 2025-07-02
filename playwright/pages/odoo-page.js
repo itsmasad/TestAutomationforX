@@ -8,6 +8,17 @@ class OdooPage {
     this.page = page;
   }
 
+  /**
+   * Log into the Odoo instance using provided credentials.
+   * @param {string} [username=testData.odoo.username] - Odoo account email.
+   * @param {string} [password=testData.odoo.password] - Odoo account password.
+   */
+  async login(username = testData.odoo.username, password = testData.odoo.password) {
+    await this.page.getByLabel(/email/i).fill(username);
+    await this.page.getByLabel(/password/i).fill(password);
+    await this.page.getByRole('button', { name: /log in/i }).click();
+  }
+
   /** Navigate to the Odoo staging environment. */
   async goto() {
     await this.page.goto(testData.odoo.stagingUrl);
