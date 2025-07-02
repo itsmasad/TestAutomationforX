@@ -73,11 +73,11 @@ class CompanyVerificationPage {
       // Fill two individual inputs sequentially.
       await inputs.nth(0).setInputFiles(doc1);
       // Wait for the second input to be ready before uploading
-      await inputs.nth(1).waitFor({ state: 'attached' });
-      await inputs.nth(1).setInputFiles(doc2);
+      // await inputs.nth(1).waitFor({ state: 'attached' });
+      // await inputs.nth(1).setInputFiles(doc2);
     }
 
-    await this.page.getByRole('button', { name: /next/i }).click();
+    // await this.page.getByRole('button', { name: /next/i }).click();
   }
 
   /** Complete all verification steps. */
@@ -85,6 +85,7 @@ class CompanyVerificationPage {
     await this.open();
     await this.fillCompanyDetails();
     await this.fillUsageDetails();
+    await this.page.pause();
     await this.uploadDocuments();
   }
 }
