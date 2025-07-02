@@ -37,5 +37,7 @@ module.exports = {
   },
   odoo: {
     stagingUrl: 'https://stg-odoo.xpendless.dev/odoo/action-483',
+    username: 'info@xpendless.com',
+    password: 'abc123',
   },
 };
