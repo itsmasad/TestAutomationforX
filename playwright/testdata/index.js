@@ -35,4 +35,7 @@ module.exports = {
     phone: '0712345678',
     email: 'testcompany@yopmail.com',
   },
+  odoo: {
+    stagingUrl: 'https://stg-odoo.xpendless.dev/odoo/action-483',
+  },
 };

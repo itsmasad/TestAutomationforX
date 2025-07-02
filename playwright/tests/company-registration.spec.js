@@ -1,6 +1,7 @@
 const { test, expect } = require('../test-hooks');
 const { CompanyRegistrationPage } = require('../pages/company-registration-page');
 const { CompanyVerificationPage } = require('../pages/company-verification-page');
+const { OdooPage } = require('../pages/odoo-page');
 
 // Tests covering the company registration and verification flow.
 
@@ -28,5 +29,10 @@ test.describe.serial('company onboarding', () => {
     const verifyPage = new CompanyVerificationPage(page, regPage.mobile);
     // debugger;
     await verifyPage.completeVerification();
+
+    // After verification steps navigate to the Odoo staging environment
+    const odoo = new OdooPage(page);
+    await odoo.goto();
+    await odoo.openKybMyPipelines();
   });
 });
