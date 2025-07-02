@@ -16,7 +16,10 @@ class OdooPage {
   async login(username = testData.odoo.username, password = testData.odoo.password) {
     await this.page.getByLabel(/email/i).fill(username);
     await this.page.getByLabel(/password/i).fill(password);
-    await this.page.getByRole('button', { name: /log in/i }).click();
+    await Promise.all([
+      this.page.waitForNavigation({ waitUntil: 'networkidle' }),
+      this.page.getByRole('button', { name: /log in/i }).click(),
+    ]);
   }
 
   /** Navigate to the Odoo staging environment. */
@@ -26,8 +29,13 @@ class OdooPage {
 
   /** Open the KYB section and select My pipelines. */
   async openKybMyPipelines() {
-    await this.page.getByRole('link', { name: /kyb/i }).click();
-    await this.page.getByRole('link', { name: /my pipelines/i }).click();
+    const kybLink = this.page.getByRole('link', { name: /kyb/i });
+    await kybLink.waitFor();
+    await kybLink.click();
+
+    const pipelineLink = this.page.getByRole('link', { name: /my pipelines/i });
+    await pipelineLink.waitFor();
+    await pipelineLink.click();
   }
 }
 
