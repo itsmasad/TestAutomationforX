@@ -60,16 +60,22 @@ class CompanyVerificationPage {
     const doc1 = path.join(__dirname, '../testdata/doc1.pdf');
     const doc2 = path.join(__dirname, '../testdata/doc2.pdf');
 
-    // Locate the two upload inputs and keep the logic simple
-    const firstInput = this.page.locator("(//div[@class='upload-icon'])[1]//input[@type='file']");
-    const secondInput = this.page.locator("(//div[@class='upload-icon'])[2]//input[@type='file']");
+    // Identify all file inputs on the page. The verification step
+    // currently exposes two upload widgets which we fill sequentially.
+    const inputs = this.page.locator("input[type='file']");
 
-    await firstInput.setInputFiles(doc1);
-    // Wait a bit before uploading the second document
-    await this.page.waitForTimeout(10000);
-    await secondInput.setInputFiles(doc2);
+    // Upload the first document and wait for the page to register it.
+    const first = inputs.nth(0);
+    await first.waitFor({ state: 'attached' });
+    await first.setInputFiles(doc1);
+    await this.page.waitForTimeout(1000);
 
-    // Click the Next button to continue
+    // Upload the second document after the first completes.
+    const second = inputs.nth(1);
+    await second.waitFor({ state: 'attached' });
+    await second.setInputFiles(doc2);
+
+    // Proceed to the next step once both uploads are set.
     await this.page.getByRole('button', { name: /next/i }).click();
   }
 
