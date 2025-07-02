@@ -60,34 +60,17 @@ class CompanyVerificationPage {
     const doc1 = path.join(__dirname, '../testdata/doc1.pdf');
     const doc2 = path.join(__dirname, '../testdata/doc2.pdf');
 
-    // File inputs live under the upload icon elements
+    // Locate the two upload inputs and keep the logic simple
     const firstInput = this.page.locator("(//div[@class='upload-icon'])[1]//input[@type='file']");
     const secondInput = this.page.locator("(//div[@class='upload-icon'])[2]//input[@type='file']");
 
-    await firstInput.waitFor();
+    await firstInput.setInputFiles(doc1);
+    // Wait a bit before uploading the second document
+    await this.page.waitForTimeout(10000);
+    await secondInput.setInputFiles(doc2);
 
-    // Upload the documents. Prefer two separate fields when available
-    if (await secondInput.count()) {
-      await firstInput.setInputFiles(doc1, { noWaitAfter: true });
-      try {
-        await secondInput.waitFor({ state: 'visible', timeout: 5000 });
-        await secondInput.setInputFiles(doc2, { noWaitAfter: true });
-      } catch {
-        // If the second field never appears, fall back to a single input
-        await firstInput.setInputFiles([doc1, doc2], { noWaitAfter: true });
-      }
-    } else {
-      // Single input accepting multiple files
-      await firstInput.setInputFiles([doc1, doc2], { noWaitAfter: true });
-    }
-
-    // Prefer an id-based locator for the next button when present
-    const nextById = this.page.locator('#documents_next');
-    if (await nextById.count()) {
-      await nextById.click();
-    } else {
-      await this.page.getByRole('button', { name: /next/i }).click();
-    }
+    // Click the Next button to continue
+    await this.page.getByRole('button', { name: /next/i }).click();
   }
 
   /** Complete all verification steps. */
