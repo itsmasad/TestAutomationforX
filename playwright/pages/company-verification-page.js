@@ -60,22 +60,22 @@ class CompanyVerificationPage {
     const doc1 = path.join(__dirname, '../testdata/doc1.pdf');
     const doc2 = path.join(__dirname, '../testdata/doc2.pdf');
 
-    // Identify all file inputs on the page. The verification step
-    // currently exposes two upload widgets which we fill sequentially.
+    // Locate all file inputs on the page. Some environments expose a
+    // single multi-file input while others render two separate fields.
     const inputs = this.page.locator("input[type='file']");
+    await inputs.first().waitFor({ state: 'attached' });
+    const count = await inputs.count();
 
-    // Upload the first document and wait for the page to register it.
-    const first = inputs.nth(0);
-    await first.waitFor({ state: 'attached' });
-    await first.setInputFiles(doc1);
-    await this.page.waitForTimeout(1000);
+    if (count === 1) {
+      // Use a single input that supports multiple files.
+      await inputs.first().setInputFiles([doc1, doc2]);
+    } else {
+      // Fill two individual inputs sequentially.
+      await inputs.nth(0).setInputFiles(doc1);
+      await this.page.waitForTimeout(1000);
+      await inputs.nth(1).setInputFiles(doc2);
+    }
 
-    // Upload the second document after the first completes.
-    const second = inputs.nth(1);
-    await second.waitFor({ state: 'attached' });
-    await second.setInputFiles(doc2);
-
-    // Proceed to the next step once both uploads are set.
     await this.page.getByRole('button', { name: /next/i }).click();
   }
 
