@@ -72,7 +72,8 @@ class CompanyVerificationPage {
     } else {
       // Fill two individual inputs sequentially.
       await inputs.nth(0).setInputFiles(doc1);
-      await this.page.waitForTimeout(1000);
+      // Wait for the second input to be ready before uploading
+      await inputs.nth(1).waitFor({ state: 'attached' });
       await inputs.nth(1).setInputFiles(doc2);
     }
 
