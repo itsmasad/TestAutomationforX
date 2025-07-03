@@ -27,15 +27,22 @@ class OdooPage {
     await this.page.goto(testData.odoo.stagingUrl);
   }
 
-  /** Open the KYB section and select My pipelines. */
+  /**
+   * Navigate to KYB → My Pipeline and remove any active filters.
+   */
   async openKybMyPipelines() {
-    const kybLink = this.page.getByRole('link', { name: /kyb/i });
-    await kybLink.waitFor();
-    await kybLink.click();
+    const kybButton = this.page.getByRole('button', { name: 'KYB' });
+    await kybButton.waitFor();
+    await kybButton.click();
 
-    const pipelineLink = this.page.getByRole('link', { name: /my pipelines/i });
-    await pipelineLink.waitFor();
-    await pipelineLink.click();
+    const pipelineMenu = this.page.getByRole('menuitem', { name: 'My Pipeline' });
+    await pipelineMenu.waitFor();
+    await pipelineMenu.click();
+
+    const removeBtn = this.page.getByRole('button', { name: 'Remove' });
+    if (await removeBtn.isVisible()) {
+      await removeBtn.click();
+    }
   }
 }
 
