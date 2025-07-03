@@ -17,7 +17,7 @@ class OdooPage {
     await this.page.getByLabel(/email/i).fill(username);
     await this.page.getByLabel(/password/i).fill(password);
     await Promise.all([
-      this.page.waitForNavigation({ waitUntil: 'networkidle' }),
+      // this.page.waitForNavigation({ waitUntil: 'networkidle' }),
       this.page.getByRole('button', { name: /log in/i }).click(),
     ]);
   }
@@ -43,6 +43,7 @@ class OdooPage {
     if (await removeBtn.isVisible()) {
       await removeBtn.click();
     }
+    
   }
 }
 
