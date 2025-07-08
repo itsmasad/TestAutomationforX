@@ -67,7 +67,8 @@ class OdooPage {
    */
   async verifyCompanyDetails(expected) {
     if (expected.name) {
-      await expect(this.page.getByText(expected.name, { exact: false })).toBeVisible();
+      const nameInput = this.page.locator('#name_0');
+      await expect(nameInput).toHaveValue(expected.name);
     }
     if (expected.registration) {
       await expect(this.page.getByText(expected.registration, { exact: false })).toBeVisible();
