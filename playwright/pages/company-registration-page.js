@@ -25,7 +25,11 @@ class CompanyRegistrationPage {
     const email = `${adminFirst.toLowerCase()}${faker.number.int({ min: 100, max: 999 })}@yopmail.com`;
     const companyName = `${adminFirst} Limited ${faker.number.int({ min: 100, max: 999 })}`;
     const mobile = `${Math.floor(100000000 + Math.random() * 900000000)}`;
+
+    // expose generated values for later verification steps
     this.mobile = mobile;
+    this.companyName = companyName;
+    this.email = email;
     const password = testData.company.password;
 
     // Begin registration on the landing page
@@ -73,6 +77,9 @@ class CompanyRegistrationPage {
     await this.page.getByLabel(/company name/i).fill(companyName);
     const regNo = `${Math.floor(10000000 + Math.random() * 90000000)}`;
     await this.page.getByLabel(/registration number/i).fill(regNo);
+
+    // store for later verification in Odoo
+    this.registrationNumber = regNo;
     await this.page.getByRole('button', { name: /register/i }).click();
 
     await this.page.getByRole('button', { name: /select plan|Get Subscription/i }).first().click();

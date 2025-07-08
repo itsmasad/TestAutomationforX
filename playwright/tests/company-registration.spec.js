@@ -36,5 +36,11 @@ test.describe.serial('company onboarding', () => {
     await odoo.login();
     await odoo.openKybMyPipelines();
     await odoo.openFirstCompany();
+    await odoo.verifyCompanyDetails({
+      name: regPage.companyName,
+      registration: regPage.registrationNumber,
+      phone: regPage.mobile,
+      email: regPage.email,
+    });
   });
 });

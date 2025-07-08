@@ -1,3 +1,4 @@
+const { expect } = require('@playwright/test');
 const testData = require('../testdata');
 
 class OdooPage {
@@ -58,6 +59,25 @@ class OdooPage {
     const firstRow = this.page.locator('tbody tr').first();
     await firstRow.waitFor();
     await firstRow.click();
+  }
+
+  /**
+   * Verify that the opened company details match expected values.
+   * @param {{name?: string, registration?: string, phone?: string, email?: string}} expected
+   */
+  async verifyCompanyDetails(expected) {
+    if (expected.name) {
+      await expect(this.page.getByText(expected.name, { exact: false })).toBeVisible();
+    }
+    if (expected.registration) {
+      await expect(this.page.getByText(expected.registration, { exact: false })).toBeVisible();
+    }
+    if (expected.phone) {
+      await expect(this.page.getByText(expected.phone, { exact: false })).toBeVisible();
+    }
+    if (expected.email) {
+      await expect(this.page.getByText(expected.email, { exact: false })).toBeVisible();
+    }
   }
 }
 
