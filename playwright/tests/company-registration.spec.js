@@ -35,5 +35,6 @@ test.describe.serial('company onboarding', () => {
     await odoo.goto();
     await odoo.login();
     await odoo.openKybMyPipelines();
+    await odoo.openFirstCompany();
   });
 });

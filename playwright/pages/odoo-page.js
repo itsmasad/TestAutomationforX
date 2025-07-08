@@ -14,8 +14,10 @@ class OdooPage {
    * @param {string} [password=testData.odoo.password] - Odoo account password.
    */
   async login(username = testData.odoo.username, password = testData.odoo.password) {
-    await this.page.getByLabel(/email/i).fill(username);
-    await this.page.getByLabel(/password/i).fill(password);
+    const emailField = this.page.getByLabel(/email/i);
+    const passwordField = this.page.getByLabel(/password/i);
+    await emailField.fill(username);
+    await passwordField.fill(password);
     await Promise.all([
       // this.page.waitForNavigation({ waitUntil: 'networkidle' }),
       this.page.getByRole('button', { name: /log in/i }).click(),
@@ -25,6 +27,9 @@ class OdooPage {
   /** Navigate to the Odoo staging environment. */
   async goto() {
     await this.page.goto(testData.odoo.stagingUrl);
+    // Wait for the login fields to appear as the page can take a moment to load
+    await this.page.getByLabel(/email/i).waitFor();
+    await this.page.getByLabel(/password/i).waitFor();
   }
 
   /**
@@ -43,7 +48,16 @@ class OdooPage {
     if (await removeBtn.isVisible()) {
       await removeBtn.click();
     }
-    
+
+  }
+
+  /**
+   * Open the first company entry in the pipeline list.
+   */
+  async openFirstCompany() {
+    const firstRow = this.page.locator('tbody tr').first();
+    await firstRow.waitFor();
+    await firstRow.click();
   }
 }
 
