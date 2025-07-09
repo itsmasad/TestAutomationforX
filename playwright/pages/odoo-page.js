@@ -71,13 +71,16 @@ class OdooPage {
       await expect(nameInput).toHaveValue(expected.name);
     }
     if (expected.registration) {
-      await expect(this.page.getByText(expected.registration, { exact: false })).toBeVisible();
+      const regInput = this.page.getByLabel(/registration number/i);
+      await expect(regInput).toHaveValue(expected.registration);
     }
     if (expected.phone) {
-      await expect(this.page.getByText(expected.phone, { exact: false })).toBeVisible();
+      const phoneInput = this.page.getByLabel(/phone/i);
+      await expect(phoneInput).toHaveValue(expected.phone);
     }
     if (expected.email) {
-      await expect(this.page.getByText(expected.email, { exact: false })).toBeVisible();
+      const emailInput = this.page.getByLabel(/email/i);
+      await expect(emailInput).toHaveValue(expected.email);
     }
   }
 }
