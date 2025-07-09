@@ -63,24 +63,38 @@ class OdooPage {
 
   /**
    * Verify that the opened company details match expected values.
-   * @param {{name?: string, registration?: string, phone?: string, email?: string}} expected
+   * @param {{name?: string, registration?: string, phone?: string, email?: string, address?: string}} expected
    */
   async verifyCompanyDetails(expected) {
     if (expected.name) {
       const nameInput = this.page.locator('#name_0');
+      const value = await nameInput.inputValue();
+      console.log('Name:', value);
       await expect(nameInput).toHaveValue(expected.name);
     }
     if (expected.registration) {
-      const regInput = this.page.getByLabel(/registration number/i);
+      const regInput = this.page.getByRole('textbox', { name: 'Reg. No.' });
+      const value = await regInput.inputValue();
+      console.log('Reg. No.:', value);
       await expect(regInput).toHaveValue(expected.registration);
     }
     if (expected.phone) {
-      const phoneInput = this.page.getByLabel(/phone/i);
+      const phoneInput = this.page.locator('#phone_2');
+      const value = await phoneInput.inputValue();
+      console.log('Phone:', value);
       await expect(phoneInput).toHaveValue(expected.phone);
     }
     if (expected.email) {
-      const emailInput = this.page.getByLabel(/email/i);
+      const emailInput = this.page.locator('#email_from_2');
+      const value = await emailInput.inputValue();
+      console.log('Email:', value);
       await expect(emailInput).toHaveValue(expected.email);
+    }
+    if (expected.address) {
+      const addressInput = this.page.getByRole('textbox', { name: 'Street...' });
+      const value = await addressInput.inputValue();
+      console.log('Address:', value);
+      await expect(addressInput).toHaveValue(expected.address);
     }
   }
 }

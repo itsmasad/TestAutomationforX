@@ -2,6 +2,7 @@ const { test, expect } = require('../test-hooks');
 const { CompanyRegistrationPage } = require('../pages/company-registration-page');
 const { CompanyVerificationPage } = require('../pages/company-verification-page');
 const { OdooPage } = require('../pages/odoo-page');
+const testData = require('../testdata');
 
 // Tests covering the company registration and verification flow.
 
@@ -41,6 +42,7 @@ test.describe.serial('company onboarding', () => {
       registration: regPage.registrationNumber,
       phone: regPage.mobile,
       email: regPage.email,
+      address: testData.company.addressLine1,
     });
   });
 });
