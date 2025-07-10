@@ -35,13 +35,14 @@ test.describe.serial('company onboarding', () => {
     const odoo = new OdooPage(page);
     await odoo.goto();
     await odoo.login();
+    // await page.pause();
     await odoo.openKybMyPipelines();
     await odoo.openFirstCompany();
     await odoo.verifyCompanyDetails({
       name: regPage.companyName,
       registration: regPage.registrationNumber,
       phone: regPage.mobile,
-      email: regPage.email,
+      email: testData.company.email,
       address: testData.company.addressLine1,
     });
   });
