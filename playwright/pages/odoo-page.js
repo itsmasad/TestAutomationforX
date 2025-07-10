@@ -20,9 +20,11 @@ class OdooPage {
     await emailField.fill(username);
     await passwordField.fill(password);
     await Promise.all([
-      // this.page.waitForNavigation({ waitUntil: 'networkidle' }),
+      this.page.waitForNavigation({ waitUntil: 'networkidle' }),
       this.page.getByRole('button', { name: /log in/i }).click(),
     ]);
+    // Ensure the dashboard is fully loaded before continuing
+    await this.page.getByRole('button', { name: 'KYB' }).waitFor();
   }
 
   /** Navigate to the Odoo staging environment. */
@@ -37,18 +39,14 @@ class OdooPage {
    * Navigate to KYB → My Pipeline and remove any active filters.
    */
   async openKybMyPipelines() {
-    await this.page.waitForTimeout(14000);
     const kybButton = this.page.getByRole('button', { name: 'KYB' });
     await kybButton.waitFor();
     await kybButton.click();
-    await this.page.waitForTimeout(2000);
     const pipelineMenu = this.page.getByRole('menuitem', { name: 'My Pipeline' });
     await pipelineMenu.waitFor();
     await pipelineMenu.click();
-    await this.page.waitForTimeout(2000);
     const removeBtn = this.page.getByRole('button', { name: 'Remove' });
     if (await removeBtn.isVisible()) {
-      await this.page.waitForTimeout(2000);
       await removeBtn.click();
     }
 
