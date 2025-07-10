@@ -20,9 +20,11 @@ class OdooPage {
     await emailField.fill(username);
     await passwordField.fill(password);
     await Promise.all([
-      // this.page.waitForNavigation({ waitUntil: 'networkidle' }),
+      this.page.waitForNavigation({ waitUntil: 'networkidle' }),
       this.page.getByRole('button', { name: /log in/i }).click(),
     ]);
+    // Wait for the main dashboard to fully load
+    await this.page.getByRole('button', { name: 'KYB' }).waitFor();
   }
 
   /** Navigate to the Odoo staging environment. */
@@ -40,10 +42,14 @@ class OdooPage {
     const kybButton = this.page.getByRole('button', { name: 'KYB' });
     await kybButton.waitFor();
     await kybButton.click();
+    // Wait for the dropdown menu to render
+    await this.page.getByRole('menuitem', { name: 'My Pipeline' }).waitFor();
 
     const pipelineMenu = this.page.getByRole('menuitem', { name: 'My Pipeline' });
     await pipelineMenu.waitFor();
     await pipelineMenu.click();
+    // Ensure the page content finishes loading before interacting further
+    await this.page.waitForLoadState('networkidle');
 
     const removeBtn = this.page.getByRole('button', { name: 'Remove' });
     if (await removeBtn.isVisible()) {
@@ -59,6 +65,8 @@ class OdooPage {
     const firstRow = this.page.locator('tbody tr').first();
     await firstRow.waitFor();
     await firstRow.click();
+    // Allow the details page to load before continuing
+    await this.page.getByRole('textbox', { name: 'Reg. No.' }).waitFor();
   }
 
   /**

@@ -41,7 +41,7 @@ test.describe.serial('company onboarding', () => {
       name: regPage.companyName,
       registration: regPage.registrationNumber,
       phone: regPage.mobile,
-      email: regPage.email,
+      email: testData.company.email,
       address: testData.company.addressLine1,
     });
   });
