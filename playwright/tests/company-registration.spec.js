@@ -46,5 +46,7 @@ test.describe.serial('company onboarding', () => {
       email: testData.company.email,
       address: testData.company.addressLine1,
     });
+
+    await odoo.acceptAndVerifyCompany();
   });
 });

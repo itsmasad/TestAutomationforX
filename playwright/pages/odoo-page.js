@@ -98,6 +98,34 @@ class OdooPage {
       await expect(addressInput).toHaveValue(expected.address);
     }
   }
+
+  /**
+   * Accept the company and then verify it within Odoo.
+   * Assumes the company details page is already open.
+   */
+  async acceptAndVerifyCompany() {
+    const acceptButton = this.page.getByRole('button', { name: /accept/i });
+    await acceptButton.waitFor();
+    await acceptButton.click();
+
+    const okButton = this.page.getByRole('button', { name: /^ok$/i });
+    await okButton.waitFor();
+    await okButton.click();
+
+    // Wait for the confirmation dialog to disappear
+    await this.page.waitForTimeout(3000);
+
+    // After accepting, a Verify button appears in the same spot
+    const verifyButton = this.page.getByRole('button', { name: /verify/i });
+    await verifyButton.waitFor();
+    await verifyButton.click();
+
+    await okButton.waitFor();
+    await okButton.click();
+
+    // Allow backend processing a little time before continuing
+    await this.page.waitForTimeout(5000);
+  }
 }
 
 module.exports = { OdooPage };
