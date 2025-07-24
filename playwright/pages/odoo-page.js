@@ -20,7 +20,7 @@ class OdooPage {
     await emailField.fill(username);
     await passwordField.fill(password);
     await Promise.all([
-      this.page.waitForNavigation({ waitUntil: 'networkidle' }),
+      // this.page.waitForNavigation({ waitUntil: 'networkidle' }),
       this.page.getByRole('button', { name: /log in/i }).click(),
     ]);
     // Ensure the dashboard is fully loaded before continuing
@@ -45,6 +45,7 @@ class OdooPage {
     const pipelineMenu = this.page.getByRole('menuitem', { name: 'My Pipeline' });
     await pipelineMenu.waitFor();
     await pipelineMenu.click();
+    await this.page.waitForTimeout(4000);
     const removeBtn = this.page.getByRole('button', { name: 'Remove' });
     if (await removeBtn.isVisible()) {
       await removeBtn.click();

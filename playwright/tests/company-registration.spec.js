@@ -41,6 +41,7 @@ test.describe.serial('company onboarding', () => {
     await odoo.verifyCompanyDetails({
       name: regPage.companyName,
       registration: regPage.registrationNumber,
+      // phone: regPage.mobile,
       phone: regPage.mobile,
       email: testData.company.email,
       address: testData.company.addressLine1,

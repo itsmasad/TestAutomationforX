@@ -85,7 +85,7 @@ class CompanyVerificationPage {
     await this.open();
     await this.fillCompanyDetails();
     await this.fillUsageDetails();
-    // await this.page.pause();
+    await this.page.pause();
     await this.uploadDocuments();
   }
 }
