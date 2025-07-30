@@ -1,11 +1,17 @@
 const base = require('@playwright/test');
 const fs = require('fs');
 const path = require('path');
+const logger = require('./logger');
 
 const test = base.test;
 
+test.beforeEach(async ({}, testInfo) => {
+  logger.start(testInfo.title);
+});
+
 // Capture a screenshot if a test fails and attach it to the results.
 test.afterEach(async ({ page }, testInfo) => {
+  logger.end();
   if (!page) return;
   // Only capture screenshots for failing tests so the report stays concise.
   if (testInfo.status !== testInfo.expectedStatus) {
