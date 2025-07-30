@@ -1,5 +1,6 @@
 const path = require('path');
 const testData = require('../testdata');
+const logger = require('../logger');
 
 class CompanyVerificationPage {
   /**
@@ -13,6 +14,7 @@ class CompanyVerificationPage {
 
   /** Navigate to the company verification page. */
   async open() {
+    logger.log('Navigate to company verification page');
     await this.page.getByRole('link', { name: /company verification/i }).click();
   }
 
@@ -22,15 +24,22 @@ class CompanyVerificationPage {
     await this.page.locator('#addressLine1').waitFor();
     // Give the page a moment before typing the address information
     await this.page.waitForTimeout(2000);
+    logger.log('Fill address line 1');
     await this.page.locator('#addressLine1').fill(testData.company.addressLine1);
+    logger.log('Fill address line 2');
     await this.page.locator('#addressLine2').fill(testData.company.addressLine2);
+    logger.log('Fill city');
     await this.page.locator('#city').fill(testData.company.city);
     
     // Use more specific locators as the page contains duplicate ids
+    logger.log(`Fill company phone with ${this.phone}`);
     await this.page.locator('input[name="companyPhone"]').fill(this.phone);
+    logger.log(`Fill email address with ${testData.company.email}`);
     await this.page.locator('#emailAddress').fill(testData.company.email);
+    logger.log(`Fill postal code with ${testData.company.postalCode}`);
     await this.page.locator('input[name="postalCode"]').fill(testData.company.postalCode);
     const next = this.page.getByRole('button', { name: /next/i });
+    logger.log('Click next on company details');
     await next.click();
   }
 
@@ -52,6 +61,7 @@ class CompanyVerificationPage {
     // Some environments may render multiple "Next" buttons. Wait for the
     // visible, enabled one before clicking so that the flow reliably advances.
     const nextButton = this.page.locator('#usage_next');
+    logger.log('Click next on usage details');
     await nextButton.click();
   }
 
@@ -68,9 +78,11 @@ class CompanyVerificationPage {
 
     if (count === 1) {
       // Use a single input that supports multiple files.
+      logger.log('Upload two documents using single input');
       await inputs.first().setInputFiles([doc1, doc2]);
     } else {
       // Fill two individual inputs sequentially.
+      logger.log('Upload document 1');
       await inputs.nth(0).setInputFiles(doc1);
       // Wait for the second input to be ready before uploading
       // await inputs.nth(1).waitFor({ state: 'attached' });
@@ -85,6 +97,7 @@ class CompanyVerificationPage {
     await this.open();
     await this.fillCompanyDetails();
     await this.fillUsageDetails();
+    logger.log('Pausing before document upload');
     await this.page.pause();
     await this.uploadDocuments();
   }

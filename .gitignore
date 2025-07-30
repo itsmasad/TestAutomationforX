@@ -5,3 +5,4 @@ playwright/test-results/
 playwright/report/
 playwright/allure-results/
 playwright/allure-report/
+playwright/logs/

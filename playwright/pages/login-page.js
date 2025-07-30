@@ -1,4 +1,5 @@
 const testData = require('../testdata');
+const logger = require('../logger');
 
 /**
  * Page object modelling the login functionality.
@@ -37,6 +38,7 @@ class LoginPage {
   /** Navigate to the application's login page. */
   async goto() {
     await this.page.goto('/login');
+    logger.log('Navigated to /login');
   }
 
   /**
@@ -46,18 +48,24 @@ class LoginPage {
    */
   async login(email = testData.credentials.email, password = testData.credentials.password) {
     await this.goto();
+    logger.log(`Fill Email address with "${email}"`);
     await this.page.getByLabel('Email address').fill(email);
+    logger.log(`Fill Password with "${password}"`);
     await this.page.getByLabel('Password').fill(password);
+    logger.log('Click Login button');
     await this.page.getByRole('button', { name: 'Login' }).click();
 
     // Wait for the OTP entry fields to appear
     await this.page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
     const inbox = email.split('@')[0];
     const otp = await LoginPage.fetchEmailOtp(this.context, inbox);
+    logger.log(`Fetched OTP ${otp} from mailbox ${inbox}`);
     const digits = otp.split('');
     for (let i = 0; i < digits.length; i++) {
+      logger.log(`Fill OTP digit ${digits[i]} in position ${i + 1}`);
       await this.page.getByRole('textbox', { name: `Please enter OTP character ${i + 1}` }).fill(digits[i]);
     }
+    logger.log('Submit OTP and login');
     await this.page.getByRole('button', { name: 'Login' }).click();
     await this.page.getByRole('link', { name: /dashboard/i }).waitFor();
   }
@@ -71,10 +79,14 @@ class LoginPage {
     if (!(await logoutLink.isVisible())) {
       const userMenu = this.page.getByText(/ryan_adams1/i);
       if (await userMenu.isVisible()) {
+        logger.log('Open user menu');
         await userMenu.click();
       }
     }
+    logger.log('Click logout');
+    await logoutLink.click();
     await this.page.getByLabel('Email address').waitFor();
+    logger.log('Logged out and login form visible');
   }
 }
 
