@@ -3,6 +3,15 @@ module.exports = {
     email: 'Ryan_Adams1@yopmail.com',
     password: 'Xpendless@A1',
   },
+  /**
+   * Update the credentials used by tests at runtime.
+   * @param {string} email - The email address to use for subsequent logins.
+   * @param {string} [password] - Optional password, defaults to existing one.
+   */
+  updateCredentials(email, password) {
+    if (email) this.credentials.email = email;
+    if (password) this.credentials.password = password;
+  },
   otp: {
     mobile: '123456',
   },

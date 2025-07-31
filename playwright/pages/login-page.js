@@ -12,6 +12,8 @@ class LoginPage {
   constructor(page, context) {
     this.page = page;
     this.context = context;
+    /** @type {string|undefined} */
+    this.email = undefined;
   }
 
   /**
@@ -68,6 +70,7 @@ class LoginPage {
     logger.log('Submit OTP and login');
     await this.page.getByRole('button', { name: 'Login' }).click();
     await this.page.getByRole('link', { name: /dashboard/i }).waitFor();
+    this.email = email;
   }
 
   /**
@@ -77,7 +80,8 @@ class LoginPage {
   async logout() {
     const logoutLink = this.page.getByRole('link', { name: /logout/i });
     if (!(await logoutLink.isVisible())) {
-      const userMenu = this.page.getByText(/ryan_adams1/i);
+      const username = this.email ? this.email.split('@')[0].toLowerCase() : '';
+      const userMenu = this.page.getByText(new RegExp(username, 'i'));
       if (await userMenu.isVisible()) {
         logger.log('Open user menu');
         await userMenu.click();
