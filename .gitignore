@@ -6,3 +6,4 @@ playwright/report/
 playwright/allure-results/
 playwright/allure-report/
 playwright/logs/
+playwright/testdata/credentials.json

@@ -8,6 +8,14 @@ async function globalSetup(config) {
   await fs.promises.mkdir(resultsDir, { recursive: true });
   const envFile = path.join(resultsDir, 'environment.properties');
   await fs.promises.writeFile(envFile, `Environment=${envName}\nBrowser=${browser}\n`);
+
+  // Remove any stored credentials so tests start fresh
+  const credFile = path.join(__dirname, 'testdata', 'credentials.json');
+  try {
+    await fs.promises.unlink(credFile);
+  } catch {
+    // ignore if file does not exist
+  }
 }
 
 module.exports = globalSetup;

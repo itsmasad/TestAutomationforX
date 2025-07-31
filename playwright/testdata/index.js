@@ -1,7 +1,18 @@
+const fs = require('fs');
+const path = require('path');
+
+const credPath = path.join(__dirname, 'credentials.json');
+let storedCreds = {};
+try {
+  storedCreds = JSON.parse(fs.readFileSync(credPath, 'utf8'));
+} catch {
+  // file does not exist or is invalid, fall back to defaults
+}
+
 module.exports = {
   credentials: {
-    email: 'Ryan_Adams1@yopmail.com',
-    password: 'Xpendless@A1',
+    email: storedCreds.email || 'Ryan_Adams1@yopmail.com',
+    password: storedCreds.password || 'Xpendless@A1',
   },
   /**
    * Update the credentials used by tests at runtime.
@@ -11,6 +22,11 @@ module.exports = {
   updateCredentials(email, password) {
     if (email) this.credentials.email = email;
     if (password) this.credentials.password = password;
+    try {
+      fs.writeFileSync(credPath, JSON.stringify(this.credentials));
+    } catch {
+      // ignore file write errors
+    }
   },
   otp: {
     mobile: '123456',
