@@ -45,18 +45,26 @@ class CompanyVerificationPage {
 
   /** Fill usage information step and proceed. */
   async fillUsageDetails() {
-    // The component previously used simple <select> elements. Some
-    // environments have moved to tab-style selectors. Try the legacy
-    // dropdowns first and fall back to clicking tabs if no selects exist.
+    // Focus on the form that is titled "Provide usage details" so we don't
+    // accidentally interact with unrelated dropdowns elsewhere on the page.
+    const usageForm = this.page.locator('form').filter({
+      hasText: /provide usage details/i,
+    });
+    await usageForm.waitFor();
 
-    const dropdowns = this.page.locator('select');
+    // The component historically used <select> elements. If those exist,
+    // iterate through each one (there are currently three) and choose the
+    // first valid option. Should the UI switch to tab-style selectors again,
+    // fall back to clicking the first tab in each tablist within the form.
+    const dropdowns = usageForm.locator('select');
+
     const dropdownCount = await dropdowns.count();
 
     if (dropdownCount > 0) {
       for (let i = 0; i < dropdownCount; i++) {
         const select = dropdowns.nth(i);
         await select.waitFor();
-        // Prefer the first non-empty option so the selection is meaningful
+
         const value = await select.evaluate((el) => {
           const option = Array.from(el.options).find(
             (o) => !o.disabled && o.value && o.value.trim() !== ''
@@ -66,17 +74,14 @@ class CompanyVerificationPage {
         if (value) {
           await select.selectOption(value);
         } else {
-          // Fallback to the second option if available, otherwise the first
           const optionCount = await select.locator('option').count();
           const index = optionCount > 1 ? 1 : 0;
           await select.selectOption({ index });
         }
       }
     } else {
-      // New interface renders options as tabs. For each tablist, pick the
-      // first available tab. This keeps the test resilient to future
-      // additions without relying on specific text.
-      const tablists = this.page.locator('[role="tablist"]');
+      const tablists = usageForm.locator('[role="tablist"]');
+
       const listCount = await tablists.count();
       for (let i = 0; i < listCount; i++) {
         const tabs = tablists.nth(i).locator('[role="tab"]');
@@ -85,11 +90,13 @@ class CompanyVerificationPage {
       }
     }
 
-    // The "Next" button id changed during redesign. Attempt the previous id
-    // and fall back to a generic role-based locator.
-    let nextButton = this.page.locator('#usage_next');
+    // Click the "Next" button associated with the usage form. The button id
+    // varies between environments, so attempt a specific id first and then
+    // fall back to a role-based locator within the same form.
+    let nextButton = usageForm.locator('#usage_next');
     if (await nextButton.count() === 0) {
-      nextButton = this.page.getByRole('button', { name: /next/i }).last();
+      nextButton = usageForm.getByRole('button', { name: /next/i });
+
     }
     logger.log('Click next on usage details');
     await nextButton.click();
