@@ -49,18 +49,28 @@ class CompanyVerificationPage {
     // environments have moved to tab-style selectors. Try the legacy
     // dropdowns first and fall back to clicking tabs if no selects exist.
 
-    const dropdowns = this.page.locator('form select');
+    const dropdowns = this.page.locator('select');
     const dropdownCount = await dropdowns.count();
 
     if (dropdownCount > 0) {
-      for (let i = 0; i < Math.min(dropdownCount, 3); i++) {
+      for (let i = 0; i < dropdownCount; i++) {
         const select = dropdowns.nth(i);
         await select.waitFor();
-        const options = await select.locator('option').all();
-        if (options.length === 0) continue;
-        const choice = options[Math.floor(Math.random() * options.length)];
-        const value = await choice.getAttribute('value');
-        await select.selectOption(value ?? { index: 0 });
+        // Prefer the first non-empty option so the selection is meaningful
+        const value = await select.evaluate((el) => {
+          const option = Array.from(el.options).find(
+            (o) => !o.disabled && o.value && o.value.trim() !== ''
+          );
+          return option ? option.value : null;
+        });
+        if (value) {
+          await select.selectOption(value);
+        } else {
+          // Fallback to the second option if available, otherwise the first
+          const optionCount = await select.locator('option').count();
+          const index = optionCount > 1 ? 1 : 0;
+          await select.selectOption({ index });
+        }
       }
     } else {
       // New interface renders options as tabs. For each tablist, pick the
