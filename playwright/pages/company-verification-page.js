@@ -45,22 +45,42 @@ class CompanyVerificationPage {
 
   /** Fill usage information step and proceed. */
   async fillUsageDetails() {
-    // The usage page contains three drop downs. Select a random option from
-    // each to avoid assumptions about the available values.
+    // The component previously used simple <select> elements. Some
+    // environments have moved to tab-style selectors. Try the legacy
+    // dropdowns first and fall back to clicking tabs if no selects exist.
+
     const dropdowns = this.page.locator('form select');
-    const count = await dropdowns.count();
-    for (let i = 0; i < Math.min(count, 3); i++) {
-      const select = dropdowns.nth(i);
-      await select.waitFor();
-      const options = await select.locator('option').all();
-      if (options.length === 0) continue;
-      const choice = options[Math.floor(Math.random() * options.length)];
-      const value = await choice.getAttribute('value');
-      await select.selectOption(value ?? { index: 0 });
-    };
-    // Some environments may render multiple "Next" buttons. Wait for the
-    // visible, enabled one before clicking so that the flow reliably advances.
-    const nextButton = this.page.locator('#usage_next');
+    const dropdownCount = await dropdowns.count();
+
+    if (dropdownCount > 0) {
+      for (let i = 0; i < Math.min(dropdownCount, 3); i++) {
+        const select = dropdowns.nth(i);
+        await select.waitFor();
+        const options = await select.locator('option').all();
+        if (options.length === 0) continue;
+        const choice = options[Math.floor(Math.random() * options.length)];
+        const value = await choice.getAttribute('value');
+        await select.selectOption(value ?? { index: 0 });
+      }
+    } else {
+      // New interface renders options as tabs. For each tablist, pick the
+      // first available tab. This keeps the test resilient to future
+      // additions without relying on specific text.
+      const tablists = this.page.locator('[role="tablist"]');
+      const listCount = await tablists.count();
+      for (let i = 0; i < listCount; i++) {
+        const tabs = tablists.nth(i).locator('[role="tab"]');
+        if (await tabs.count() === 0) continue;
+        await tabs.nth(0).click();
+      }
+    }
+
+    // The "Next" button id changed during redesign. Attempt the previous id
+    // and fall back to a generic role-based locator.
+    let nextButton = this.page.locator('#usage_next');
+    if (await nextButton.count() === 0) {
+      nextButton = this.page.getByRole('button', { name: /next/i }).last();
+    }
     logger.log('Click next on usage details');
     await nextButton.click();
   }
