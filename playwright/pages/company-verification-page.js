@@ -52,42 +52,41 @@ class CompanyVerificationPage {
     });
     await usageForm.waitFor();
 
-    // The component historically used <select> elements. If those exist,
-    // iterate through each one (there are currently three) and choose the
-    // first valid option. Should the UI switch to tab-style selectors again,
-    // fall back to clicking the first tab in each tablist within the form.
-    const dropdowns = usageForm.locator('select');
+    // The form contains three usage dropdowns. Explicitly select the first
+    // available option from each field to ensure all questions are answered
+    // before proceeding.
+    const usageDropdowns = [
+      this.page.getByLabel(/how many are you/i),
+      this.page.getByLabel(/how much do you approximately/i),
+      this.page.getByLabel(/where do you expect xpendless/i),
+    ];
 
-    const dropdownCount = await dropdowns.count();
+    for (const dropdown of usageDropdowns) {
+      await dropdown.waitFor();
 
-    if (dropdownCount > 0) {
-      for (let i = 0; i < dropdownCount; i++) {
-        const select = dropdowns.nth(i);
-        await select.waitFor();
+      // Wait for options to be attached then pick the first enabled choice.
+      const options = dropdown.locator('option');
+      await options.first().waitFor();
 
-        const value = await select.evaluate((el) => {
-          const option = Array.from(el.options).find(
-            (o) => !o.disabled && o.value && o.value.trim() !== ''
-          );
-          return option ? option.value : null;
-        });
-        if (value) {
-          await select.selectOption(value);
-        } else {
-          const optionCount = await select.locator('option').count();
-          const index = optionCount > 1 ? 1 : 0;
-          await select.selectOption({ index });
-        }
-      }
-    } else {
-      const tablists = usageForm.locator('[role="tablist"]');
+      const index = await dropdown.evaluate((el) => {
+        const opts = Array.from(el.options);
+        const idx = opts.findIndex(
+          (o) => !o.disabled && o.value && o.value.trim() !== ''
+        );
+        return idx >= 0 ? idx : 0;
+      });
 
-      const listCount = await tablists.count();
-      for (let i = 0; i < listCount; i++) {
-        const tabs = tablists.nth(i).locator('[role="tab"]');
-        if (await tabs.count() === 0) continue;
-        await tabs.nth(0).click();
-      }
+      await dropdown.selectOption({ index });
+    }
+
+    // In environments where the dropdowns are rendered as tab-style selectors,
+    // fall back to clicking the first tab in each list.
+    const tablists = usageForm.locator('[role="tablist"]');
+    const listCount = await tablists.count();
+    for (let i = 0; i < listCount; i++) {
+      const tabs = tablists.nth(i).locator('[role="tab"]');
+      if (await tabs.count() === 0) continue;
+      await tabs.nth(0).click();
     }
 
     // Click the "Next" button associated with the usage form. The button id
