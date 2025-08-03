@@ -80,9 +80,12 @@ class CompanyVerificationPage {
     for (const dropdown of usageDropdowns) {
       await dropdown.click();
 
-      // Retrieve all options from the currently opened listbox and choose one
-      // at random. The dropdown closes automatically after selection.
-      const options = this.page.locator('[role="listbox"] [role="option"]');
+      // Retrieve options from the listbox that opened for this dropdown and
+      // choose one at random. The dropdown closes automatically after
+      // selection.
+      const listbox = this.page.locator('[role="listbox"]').last();
+      await listbox.waitFor();
+      const options = listbox.locator('[role="option"]');
       const count = await options.count();
       if (count === 0) {
         continue;
