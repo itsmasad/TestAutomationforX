@@ -45,22 +45,55 @@ class CompanyVerificationPage {
 
   /** Fill usage information step and proceed. */
   async fillUsageDetails() {
-    // The usage page contains three drop downs. Select a random option from
-    // each to avoid assumptions about the available values.
-    const dropdowns = this.page.locator('form select');
-    const count = await dropdowns.count();
-    for (let i = 0; i < Math.min(count, 3); i++) {
-      const select = dropdowns.nth(i);
-      await select.waitFor();
-      const options = await select.locator('option').all();
-      if (options.length === 0) continue;
-      const choice = options[Math.floor(Math.random() * options.length)];
-      const value = await choice.getAttribute('value');
-      await select.selectOption(value ?? { index: 0 });
-    };
-    // Some environments may render multiple "Next" buttons. Wait for the
-    // visible, enabled one before clicking so that the flow reliably advances.
-    const nextButton = this.page.locator('#usage_next');
+    // Focus on the form that is titled "Provide usage details" so we don't
+    // accidentally interact with unrelated dropdowns elsewhere on the page.
+    const usageForm = this.page.locator('form').filter({
+      hasText: /provide usage details/i,
+    });
+    await usageForm.waitFor();
+
+    // The component historically used <select> elements. If those exist,
+    // iterate through each one (there are currently three) and choose the
+    // first valid option. Should the UI switch to tab-style selectors again,
+    // fall back to clicking the first tab in each tablist within the form.
+    const dropdowns = usageForm.locator('select');
+    const dropdownCount = await dropdowns.count();
+
+    if (dropdownCount > 0) {
+      for (let i = 0; i < dropdownCount; i++) {
+        const select = dropdowns.nth(i);
+        await select.waitFor();
+        const value = await select.evaluate((el) => {
+          const option = Array.from(el.options).find(
+            (o) => !o.disabled && o.value && o.value.trim() !== ''
+          );
+          return option ? option.value : null;
+        });
+        if (value) {
+          await select.selectOption(value);
+        } else {
+          const optionCount = await select.locator('option').count();
+          const index = optionCount > 1 ? 1 : 0;
+          await select.selectOption({ index });
+        }
+      }
+    } else {
+      const tablists = usageForm.locator('[role="tablist"]');
+      const listCount = await tablists.count();
+      for (let i = 0; i < listCount; i++) {
+        const tabs = tablists.nth(i).locator('[role="tab"]');
+        if (await tabs.count() === 0) continue;
+        await tabs.nth(0).click();
+      }
+    }
+
+    // Click the "Next" button associated with the usage form. The button id
+    // varies between environments, so attempt a specific id first and then
+    // fall back to a role-based locator within the same form.
+    let nextButton = usageForm.locator('#usage_next');
+    if (await nextButton.count() === 0) {
+      nextButton = usageForm.getByRole('button', { name: /next/i });
+    }
     logger.log('Click next on usage details');
     await nextButton.click();
   }
