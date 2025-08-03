@@ -59,18 +59,20 @@ class CompanyVerificationPage {
       this.page
         .locator('div')
         .filter({ hasText: /^How many are you\?Select$/ })
+
         .getByRole('button'),
       this.page
         .locator('div')
         .filter({
-          hasText:
-            /^How much do you approximately expect to spend on Xpendless each month\?Select$/,
+          hasText: /^How much do you approximately expect to spend on Xpendless each month\?Select$/,
+
         })
         .getByRole('button'),
       this.page
         .locator('div')
         .filter({
           hasText: /^Where do you expect Xpendless cards will be used\?Select$/,
+
         })
         .getByRole('button'),
     ];
