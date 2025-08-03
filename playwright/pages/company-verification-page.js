@@ -80,13 +80,29 @@ class CompanyVerificationPage {
         }
       }
     } else {
-      const tablists = usageForm.locator('[role="tablist"]');
+      // Some versions of the UI expose custom combobox widgets instead of
+      // native <select> elements. In that case interact with the comboboxes
+      // directly by opening each one and choosing the first available option.
+      const combos = usageForm.getByRole('combobox');
+      const comboCount = await combos.count();
 
-      const listCount = await tablists.count();
-      for (let i = 0; i < listCount; i++) {
-        const tabs = tablists.nth(i).locator('[role="tab"]');
-        if (await tabs.count() === 0) continue;
-        await tabs.nth(0).click();
+      if (comboCount > 0) {
+        for (let i = 0; i < comboCount; i++) {
+          const combo = combos.nth(i);
+          await combo.click();
+          const option = this.page.getByRole('option').first();
+          await option.waitFor();
+          await option.click();
+        }
+      } else {
+        const tablists = usageForm.locator('[role="tablist"]');
+
+        const listCount = await tablists.count();
+        for (let i = 0; i < listCount; i++) {
+          const tabs = tablists.nth(i).locator('[role="tab"]');
+          if (await tabs.count() === 0) continue;
+          await tabs.nth(0).click();
+        }
       }
     }
 
