@@ -57,12 +57,14 @@ class CompanyVerificationPage {
     // first valid option. Should the UI switch to tab-style selectors again,
     // fall back to clicking the first tab in each tablist within the form.
     const dropdowns = usageForm.locator('select');
+
     const dropdownCount = await dropdowns.count();
 
     if (dropdownCount > 0) {
       for (let i = 0; i < dropdownCount; i++) {
         const select = dropdowns.nth(i);
         await select.waitFor();
+
         const value = await select.evaluate((el) => {
           const option = Array.from(el.options).find(
             (o) => !o.disabled && o.value && o.value.trim() !== ''
@@ -79,6 +81,7 @@ class CompanyVerificationPage {
       }
     } else {
       const tablists = usageForm.locator('[role="tablist"]');
+
       const listCount = await tablists.count();
       for (let i = 0; i < listCount; i++) {
         const tabs = tablists.nth(i).locator('[role="tab"]');
@@ -93,6 +96,7 @@ class CompanyVerificationPage {
     let nextButton = usageForm.locator('#usage_next');
     if (await nextButton.count() === 0) {
       nextButton = usageForm.getByRole('button', { name: /next/i });
+
     }
     logger.log('Click next on usage details');
     await nextButton.click();
