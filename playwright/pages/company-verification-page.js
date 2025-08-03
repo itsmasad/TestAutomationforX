@@ -52,39 +52,56 @@ class CompanyVerificationPage {
     });
     await usageForm.waitFor();
 
-    // Each usage question is implemented as a custom dropdown. Use the
-    // provided locators to click the trigger button and then choose a random
-    // available option from the list.
-    const dropdownButtons = [
+    // The form contains three usage dropdowns. Each dropdown is represented
+    // as a button that opens a listbox. Use the provided locators to find the
+    // buttons and pick a random option from each list.
+    const usageDropdowns = [
       this.page
         .locator('div')
-        .filter({ hasText: /^How many are you\\?Select$/ })
+        .filter({ hasText: /^How many are you\?Select$/ })
+
         .getByRole('button'),
       this.page
         .locator('div')
         .filter({
-          hasText:
-            /^How much do you approximately expect to spend on Xpendless each month\\?Select$/,
+          hasText: /^How much do you approximately expect to spend on Xpendless each month\?Select$/,
+
         })
         .getByRole('button'),
       this.page
         .locator('div')
         .filter({
-          hasText: /^Where do you expect Xpendless cards will be used\\?Select$/,
+          hasText: /^Where do you expect Xpendless cards will be used\?Select$/,
+
         })
         .getByRole('button'),
     ];
 
-    for (const button of dropdownButtons) {
-      await button.waitFor();
-      await button.click();
+    for (const dropdown of usageDropdowns) {
+      await dropdown.click();
 
-      // After opening the dropdown, select a random visible option.
-      const options = this.page.locator('[role="option"]:visible');
-      await options.first().waitFor();
+      // Retrieve all options from the currently opened listbox and choose one
+      // at random. The dropdown closes automatically after selection.
+      const options = this.page.locator('[role="listbox"] [role="option"]');
       const count = await options.count();
+      if (count === 0) {
+        continue;
+      }
+
       const index = Math.floor(Math.random() * count);
       await options.nth(index).click();
+    }
+
+    // In some environments the usage selections may be rendered as
+    // tab-style controls rather than traditional listboxes. If any tablists
+    // are present, pick the first tab in each to ensure a value is set.
+    const tablists = usageForm.locator('[role="tablist"]');
+    const listCount = await tablists.count();
+    for (let i = 0; i < listCount; i++) {
+      const tabs = tablists.nth(i).locator('[role="tab"]');
+      const tabCount = await tabs.count();
+      if (tabCount === 0) continue;
+      await tabs.nth(Math.floor(Math.random() * tabCount)).click();
     }
 
     // Click the "Next" button associated with the usage form. The button id
