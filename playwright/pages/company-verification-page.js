@@ -87,6 +87,7 @@ class CompanyVerificationPage {
       const tabs = tablists.nth(i).locator('[role="tab"]');
       if (await tabs.count() === 0) continue;
       await tabs.nth(0).click();
+
     }
 
     // Click the "Next" button associated with the usage form. The button id
