@@ -60,18 +60,46 @@ class CompanyVerificationPage {
 
     for (let i = 0; i < dropdownCount; i++) {
       const dropdown = usageDropdowns.nth(i);
+
+      // Some dropdown implementations expose the id of the listbox they
+      // control via the `aria-controls` attribute. Capture it before opening
+      // the dropdown so that the correct list of options can be targeted even
+      // if multiple dropdowns are present on the page.
+      const listboxId = await dropdown.getAttribute('aria-controls');
+
       await dropdown.click();
 
-      // Each dropdown opens a listbox. Choose a random option from the
-      // associated list. The dropdown closes automatically after selection.
-      const listbox = this.page.locator('[role="listbox"]').last();
-      await listbox.waitFor();
-      const options = listbox.locator('[role="option"]');
+      // Resolve the options associated with this dropdown. Prefer using the
+      // explicit listbox id when available, but fall back to the last opened
+      // listbox as a heuristic for frameworks that dynamically insert the menu
+      // into the DOM.
+      let options;
+      if (listboxId) {
+        const listbox = this.page.locator(`#${listboxId}`);
+        await listbox.waitFor();
+        options = listbox.locator('[role="option"]');
+      } else {
+        const listbox = this.page.locator('[role="listbox"]').last();
+        await listbox.waitFor();
+        options = listbox.locator('[role="option"]');
+      }
+
       const count = await options.count();
-      if (count === 0) continue;
+
+      if (count === 0) {
+        // Some dropdowns rely solely on keyboard interaction. If no options are
+        // detected, fall back to selecting the first entry via ArrowDown + Enter.
+        await this.page.keyboard.press('ArrowDown');
+        await this.page.keyboard.press('Enter');
+        await this.page.waitForTimeout(500);
+        continue;
+      }
 
       const index = Math.floor(Math.random() * count);
       await options.nth(index).click();
+      // Give the UI a moment to register the selection before moving on to the
+      // next dropdown.
+      await this.page.waitForTimeout(500);
     }
 
     // In some environments the usage selections may be rendered as
