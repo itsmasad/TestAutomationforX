@@ -53,26 +53,25 @@ class CompanyVerificationPage {
     await usageForm.waitFor();
 
     // The form contains three usage dropdowns. Each dropdown is represented
-    // as a button that opens a listbox. Use the provided locators to find the
-    // buttons and pick a random option from each list.
+    // as a button that opens a listbox. Use text from the question labels to
+    // reliably locate the dropdown buttons regardless of their default
+    // selected value.
     const usageDropdowns = [
-      this.page
-        .locator('div')
-        .filter({ hasText: /^How many are you\?Select$/ })
-
+      usageForm
+        .locator('.form-outline')
+        .filter({ hasText: /^How many are you\?/i })
         .getByRole('button'),
-      this.page
-        .locator('div')
+      usageForm
+        .locator('.form-outline')
         .filter({
-          hasText: /^How much do you approximately expect to spend on Xpendless each month\?Select$/,
-
+          hasText:
+            /^How much do you approximately expect to spend on Xpendless each month\?/i,
         })
         .getByRole('button'),
-      this.page
-        .locator('div')
+      usageForm
+        .locator('.form-outline')
         .filter({
-          hasText: /^Where do you expect Xpendless cards will be used\?Select$/,
-
+          hasText: /^Where do you expect Xpendless cards will be used\?/i,
         })
         .getByRole('button'),
     ];
