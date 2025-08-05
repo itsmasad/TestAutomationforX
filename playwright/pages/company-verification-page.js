@@ -52,43 +52,23 @@ class CompanyVerificationPage {
     });
     await usageForm.waitFor();
 
-    // The form contains three usage dropdowns. Each dropdown is represented
-    // as a button that opens a listbox. Use text from the question labels to
-    // reliably locate the dropdown buttons regardless of their default
-    // selected value.
-    const usageDropdowns = [
-      usageForm
-        .locator('.form-outline')
-        .filter({ hasText: /^How many are you\?/i })
-        .getByRole('button'),
-      usageForm
-        .locator('.form-outline')
-        .filter({
-          hasText:
-            /^How much do you approximately expect to spend on Xpendless each month\?/i,
-        })
-        .getByRole('button'),
-      usageForm
-        .locator('.form-outline')
-        .filter({
-          hasText: /^Where do you expect Xpendless cards will be used\?/i,
-        })
-        .getByRole('button'),
-    ];
+    // Usage detail questions are presented as a series of dropdown buttons
+    // with ids following the pattern `question_<number>`. Determine how many
+    // of these dropdowns are rendered and select a random option for each.
+    const usageDropdowns = usageForm.locator('button[id^="question_"]');
+    const dropdownCount = await usageDropdowns.count();
 
-    for (const dropdown of usageDropdowns) {
+    for (let i = 0; i < dropdownCount; i++) {
+      const dropdown = usageDropdowns.nth(i);
       await dropdown.click();
 
-      // Retrieve options from the listbox that opened for this dropdown and
-      // choose one at random. The dropdown closes automatically after
-      // selection.
+      // Each dropdown opens a listbox. Choose a random option from the
+      // associated list. The dropdown closes automatically after selection.
       const listbox = this.page.locator('[role="listbox"]').last();
       await listbox.waitFor();
       const options = listbox.locator('[role="option"]');
       const count = await options.count();
-      if (count === 0) {
-        continue;
-      }
+      if (count === 0) continue;
 
       const index = Math.floor(Math.random() * count);
       await options.nth(index).click();
