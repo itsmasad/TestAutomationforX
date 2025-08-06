@@ -104,7 +104,8 @@ class CompanyRegistrationPage {
     await this.page.getByRole('button', { name: /register/i }).click();
 
     logger.log('Select Enterprise subscription plan');
-    await this.page.getByRole('button', { name: /Enterprise/i }).click();
+    await this.page.locator('#subscription_3').click();
+
     // await this.page.waitForTimeout(10000);
 
     // Some flows allow skipping the subscription payment
@@ -113,7 +114,7 @@ class CompanyRegistrationPage {
     // if (await skipButton.isVisible()) {
     //   await skipButton.click();
     // }
-    logger.log('Skip subscription payment');
+    logger.log('Skip Onboarding Screens');
     await skipButton.click();
 
     await this.page.getByRole('link', { name: /dashboard/i }).waitFor();
