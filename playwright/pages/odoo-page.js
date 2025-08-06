@@ -21,7 +21,7 @@ class OdooPage {
     await passwordField.fill(password);
     // Submit the form and wait for the dashboard to load
     await this.page.getByRole('button', { name: /log in/i }).click();
-    await this.page.waitForLoadState('networkidle');
+    // await this.page.waitForLoadState('networkidle');
     // Ensure the dashboard is fully ready before interacting
     await this.page.getByRole('button', { name: 'KYB' }).waitFor();
   }

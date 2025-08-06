@@ -161,6 +161,7 @@ class CompanyVerificationPage {
     // Ensure the usage details form is fully submitted before proceeding
     logger.log('Wait for form submission before document upload');
     await this.page.waitForTimeout(3000);
+    await this.page.pause();
     await this.uploadDocuments();
   }
 }
