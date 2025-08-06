@@ -158,8 +158,9 @@ class CompanyVerificationPage {
     await this.open();
     await this.fillCompanyDetails();
     await this.fillUsageDetails();
-    logger.log('Pausing before document upload');
-    await this.page.pause();
+    // Ensure the usage details form is fully submitted before proceeding
+    logger.log('Wait for form submission before document upload');
+    await this.page.waitForTimeout(3000);
     await this.uploadDocuments();
   }
 }
