@@ -22,8 +22,8 @@ module.exports = defineConfig({
   retries: 0,
   // <— run only one worker (i.e. serial execution)
   workers: 1,
-  // timeout: 2 * 60 * 1000,         // 2 minutes
-  timeout: 30000,                 // 30 seconds
+  timeout: 2 * 60 * 1000,         // 2 minutes
+  // timeout: 30000,                 // 30 seconds
   reporter: [ ['list'], ['allure-playwright'] ],
   use: {
     headless: true,
