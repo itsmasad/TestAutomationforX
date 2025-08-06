@@ -76,11 +76,9 @@ class CompanyVerificationPage {
       let options;
       if (listboxId) {
         const listbox = this.page.locator(`#${listboxId}`);
-        await listbox.waitFor();
         options = listbox.locator('[role="option"]');
       } else {
         const listbox = this.page.locator('[role="listbox"]').last();
-        await listbox.waitFor();
         options = listbox.locator('[role="option"]');
       }
 

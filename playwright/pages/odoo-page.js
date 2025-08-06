@@ -31,7 +31,7 @@ class OdooPage {
   async goto() {
     await this.page.goto(testData.odoo.stagingUrl);
     // Wait for the page to fully load before attempting to log in
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForLoadState('networkidle');
     // Wait for the login fields to appear as the page can take a moment to load
     await this.page.getByLabel(/email/i).waitFor();
     await this.page.getByLabel(/password/i).waitFor();
