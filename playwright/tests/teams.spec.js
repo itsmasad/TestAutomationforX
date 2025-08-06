@@ -13,7 +13,10 @@ test('create department via teams plus icon', async ({ page, context }) => {
   const teams = new TeamsPage(page);
   await teams.open();
   await teams.addDepartment(testData.teams.departmentName);
-  await expect(page.locator('.Toastify__toast--success')).toBeVisible();
+  const successToast = page.locator('.Toastify__toast--success');
+  await expect(successToast).toBeVisible();
+  await expect(successToast).toContainText(/department/i);
+  await expect(page.getByText(testData.teams.departmentName)).toBeVisible();
 
   await loginPage.logout();
 });

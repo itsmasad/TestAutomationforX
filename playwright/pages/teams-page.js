@@ -25,7 +25,7 @@ class TeamsPage {
     logger.log(`Fill department name with "${name}"`);
     await this.page.locator('#departmentName, #depatmentName').fill(name);
     logger.log('Submit new department');
-    await this.page.locator('#submit_add_department').click();
+    await this.page.getByRole('button', { name: 'Add' }).click();
   }
 }
 
