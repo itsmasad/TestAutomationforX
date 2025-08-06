@@ -147,8 +147,10 @@ class CompanyVerificationPage {
       // await inputs.nth(1).waitFor({ state: 'attached' });
       // await inputs.nth(1).setInputFiles(doc2);
     }
-
-    // await this.page.getByRole('button', { name: /next/i }).click();
+    // Allow some time for the documents to finish uploading before continuing
+    await this.page.waitForTimeout(3000);
+    logger.log('Click next after document upload');
+    await this.page.getByRole('button', { name: /next/i }).click();
   }
 
   /** Complete all verification steps. */
