@@ -51,6 +51,9 @@ module.exports = {
       narrative: 'Withdrawing Fund',
     },
   },
+  teams: {
+    departmentName: 'Marketing',
+  },
   company: {
     password: 'xpendless@A1',
     addressLine1: '123 Verification St',
