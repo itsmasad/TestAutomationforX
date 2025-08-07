@@ -31,9 +31,6 @@ test.describe.serial('company onboarding', () => {
     // debugger;
     await verifyPage.completeVerification();
 
-    // Use the newly created admin account for subsequent tests
-    testData.updateCredentials(regPage.email, testData.company.password);
-
     // After verification steps navigate to the Odoo staging environment
     const odoo = new OdooPage(page);
     await odoo.goto();
