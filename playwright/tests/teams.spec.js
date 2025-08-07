@@ -22,7 +22,10 @@ for (const name of departmentNames) {
     const teams = new TeamsPage(page);
     await teams.open();
     await teams.addDepartment(name);
-    const successToast = page.locator('.Toastify__toast--success');
+    const successToast = page
+      .locator('.Toastify__toast--success')
+      .filter({ hasText: 'Department created successfully!' })
+      .first();
     await successToast.waitFor({ state: 'visible' });
     await expect(successToast).toHaveText('Department created successfully!');
     await expect(page.getByText(name)).toBeVisible();
