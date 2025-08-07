@@ -118,6 +118,9 @@ class CompanyRegistrationPage {
     await skipButton.click();
 
     await this.page.getByRole('link', { name: /dashboard/i }).waitFor();
+
+    // Persist the newly created admin credentials so subsequent tests can reuse them
+    testData.updateCredentials(email, password);
   }
 }
 
