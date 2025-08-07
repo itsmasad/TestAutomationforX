@@ -5,7 +5,8 @@ const testData = require('../testdata');
 
 // Validate creating new departments from the Teams page
 // This suite logs in, opens Teams, adds a department and expects a success toast
-// then logs out for each department name.
+// message "Department created successfully!" then logs out for each department
+// name.
 
 const departmentNames = [
   testData.teams.departmentName,
@@ -23,7 +24,7 @@ for (const name of departmentNames) {
     await teams.addDepartment(name);
     const successToast = page.locator('.Toastify__toast--success');
     await successToast.waitFor({ state: 'visible' });
-    await expect(successToast).toContainText(/department/i);
+    await expect(successToast).toHaveText('Department created successfully!');
     await expect(page.getByText(name)).toBeVisible();
 
     await loginPage.logout();
