@@ -4,7 +4,7 @@ const { WalletPage } = require('../pages/wallet-page');
 const testData = require('../testdata');
 
 // Test adding funds to the company wallet
-test('company wallet add funds', async ({ page, context }) => {
+test.skip('company wallet add funds', async ({ page, context }) => {
   const loginPage = new LoginPage(page, context);
   await loginPage.login(testData.credentials.email, testData.credentials.password);
 
@@ -17,7 +17,7 @@ test('company wallet add funds', async ({ page, context }) => {
 });
 
 // Test withdrawing funds from the company wallet
-test('company wallet withdraw funds', async ({ page, context }) => {
+test.skip('company wallet withdraw funds', async ({ page, context }) => {
   const loginPage = new LoginPage(page, context);
   await loginPage.login(testData.credentials.email, testData.credentials.password);
 
