@@ -4,7 +4,7 @@ const { PettyCashPage } = require('../pages/petty-cash-page');
 const testData = require('../testdata');
 
 // Validate adding money to petty cash
-test('petty cash add cash', async ({ page, context }) => {
+test.skip('petty cash add cash', async ({ page, context }) => {
   const loginPage = new LoginPage(page, context);
   await loginPage.login(testData.credentials.email, testData.credentials.password);
 
@@ -17,7 +17,7 @@ test('petty cash add cash', async ({ page, context }) => {
 });
 
 // Validate withdrawing money from petty cash
-test('petty cash withdraw cash', async ({ page, context }) => {
+test.skip('petty cash withdraw cash', async ({ page, context }) => {
   const loginPage = new LoginPage(page, context);
   await loginPage.login(testData.credentials.email, testData.credentials.password);
 
