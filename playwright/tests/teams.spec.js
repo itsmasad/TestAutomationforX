@@ -22,7 +22,7 @@ for (const name of departmentNames) {
     await teams.open();
     await teams.addDepartment(name);
     const successToast = page.locator('.Toastify__toast--success');
-    await expect(successToast).toBeVisible();
+    await successToast.waitFor({ state: 'visible' });
     await expect(successToast).toContainText(/department/i);
     await expect(page.getByText(name)).toBeVisible();
 

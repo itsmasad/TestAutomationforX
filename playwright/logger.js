@@ -16,7 +16,7 @@ function start(testTitle) {
     // run timestamp so all logs for this execution stay in one file.
     stream = fs.createWriteStream(filePath, { flags: 'a' });
   }
-  stream.write(`${new Date().toISOString()} - Test: ${testTitle}\n`);
+  stream.write(`\n${new Date().toISOString()} - Test: ${testTitle}\n`);
 }
 
 function log(message) {
