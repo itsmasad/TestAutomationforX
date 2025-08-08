@@ -11,6 +11,11 @@ const mobileMap = {
   Accountant: UsersPage.randomDigits(8),
   'Card Holder': UsersPage.randomDigits(9),
 };
+const lastNameMap = {
+  Admin: 'Admin',
+  Accountant: 'Accountant',
+  'Card Holder': 'Card Holder',
+};
 
 for (const role of roles) {
   test(`create user - ${role}`, async ({ page, context }) => {
@@ -21,7 +26,8 @@ for (const role of roles) {
     await users.open();
     await users.addUser({
       firstName: faker.person.firstName().replace(/[^a-zA-Z]/g, ''),
-      lastName: faker.person.lastName().replace(/[^a-zA-Z]/g, ''),
+      // Last name must correspond to the selected role
+      lastName: lastNameMap[role],
       email: `${faker.string.alpha({ length: 8 }).toLowerCase()}@yopmail.com`,
       role,
       mobile: mobileMap[role],
