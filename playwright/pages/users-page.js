@@ -29,6 +29,22 @@ class UsersPage {
   }
 
   /**
+   * Select an option from a custom dropdown that is implemented with
+   * non-native elements (e.g. <button> + <li> list).
+   * Playwright's selectOption works only on <select> elements, so for
+   * these custom widgets we need to click the control and then choose the
+   * option manually.
+   * @param {RegExp} label - Regex matching the label associated with the dropdown
+   * @param {string} option - Visible text of the option to choose
+   */
+  async selectFromDropdown(label, option) {
+    // Open the dropdown by clicking the control associated with the label
+    await this.page.getByLabel(label).click();
+    // Click the option text
+    await this.page.getByRole('option', { name: option, exact: true }).click();
+  }
+
+  /**
    * Add a new user via the Add User form.
    * @param {object} user
    * @param {string} user.firstName
@@ -59,16 +75,16 @@ class UsersPage {
     await this.page.getByLabel(/national id/i).fill(nationalId);
 
     logger.log(`Select department ${department}`);
-    await this.page.getByLabel(/department/i).selectOption({ label: department });
+    await this.selectFromDropdown(/department/i, department);
 
     logger.log(`Select gender ${gender}`);
-    await this.page.getByLabel(/gender/i).selectOption({ label: gender });
+    await this.selectFromDropdown(/gender/i, gender);
 
     logger.log(`Select nationality ${nationality}`);
-    await this.page.getByLabel(/nationality/i).selectOption({ label: nationality });
+    await this.selectFromDropdown(/nationality/i, nationality);
 
     logger.log(`Select role ${role}`);
-    await this.page.getByLabel(/role/i).selectOption({ label: role });
+    await this.selectFromDropdown(/role/i, role);
 
     logger.log('Submit new user form');
     await this.page.getByRole('button', { name: /create|add|submit/i }).click();
