@@ -116,30 +116,25 @@ class UsersPage {
     await this.selectFromDropdown(/nationality/i, nationality);
 
     logger.log(`Set role ${role}`);
-    const roleLower = role.toLowerCase();
+    // The role control may be rendered as a checkbox, switch, or a labelled
+    // input. Try common strategies to ensure the role is actually selected.
+    const roleRegex = new RegExp(role, 'i');
 
-    // Admin and Accountant roles use toggle switches instead of checkboxes.
-    // Attempt to interact with a switch control first, falling back to a
-    // label click if the switch is not found.
-    if (roleLower.includes('admin')) {
-      const adminSwitch = this.page.getByRole('switch', { name: /admin/i });
-      if (await adminSwitch.count()) {
-        await adminSwitch.click();
+    // First attempt to check a labelled control (covers standard checkboxes).
+    const labelledControl = this.page.getByLabel(roleRegex);
+    if (await labelledControl.count()) {
+      await labelledControl.check({ force: true });
+    } else {
+      // Some roles are implemented as toggle switches.
+      const switchControl = this.page.getByRole('switch', { name: roleRegex });
+      if (await switchControl.count()) {
+        await switchControl.click();
       } else {
-        await this.page.getByLabel(/admin/i).click();
+        // Fallback to a role-based checkbox locator.
+        await this.page
+          .getByRole('checkbox', { name: roleRegex })
+          .check({ force: true });
       }
-    }
-    if (roleLower.includes('accountant')) {
-      const accountantSwitch = this.page.getByRole('switch', { name: /accountant/i });
-      if (await accountantSwitch.count()) {
-        await accountantSwitch.click();
-      } else {
-        await this.page.getByLabel(/accountant/i).click();
-      }
-    }
-    // Card Holder role uses a traditional checkbox.
-    if (roleLower.includes('card holder')) {
-      await this.page.getByLabel(/card holder/i).check();
     }
 
     logger.log('Submit new user form');
