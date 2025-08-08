@@ -57,8 +57,13 @@ class UsersPage {
     if (count === 0) {
       // Some dropdowns only respond to keyboard interaction
       await this.page.keyboard.press('ArrowDown');
-      // Use Space instead of Enter to avoid triggering form submission
-      await this.page.keyboard.press('Space');
+      // Click the currently focused option instead of using keyboard selection
+      const focused = this.page.locator(':focus');
+      if (await focused.count()) {
+        await focused.click();
+      } else {
+        await dropdown.click();
+      }
       await this.page.waitForTimeout(500);
       return;
     }
