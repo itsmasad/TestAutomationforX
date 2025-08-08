@@ -74,6 +74,57 @@ class UsersPage {
   }
 
   /**
+   * Ensure the given role is enabled prior to submitting the form. Some roles
+   * are rendered as checkboxes while others use toggle switches without an
+   * accessible label, so a few strategies are attempted.
+   *
+   * @param {string} role - Visible role text (e.g. "Admin", "Accountant").
+   */
+  async setRole(role) {
+    const roleRegex = new RegExp(role, 'i');
+
+    // Try a simple label lookup first which covers standard checkboxes
+    const labelledControl = this.page.getByLabel(roleRegex);
+    if (await labelledControl.count()) {
+      await labelledControl.check({ force: true });
+      return;
+    }
+
+    // Some roles may be implemented as switches
+    const switchControl = this.page.getByRole('switch', { name: roleRegex });
+    if (await switchControl.count()) {
+      const state = await switchControl.getAttribute('aria-checked');
+      if (state !== 'true') {
+        await switchControl.click();
+      }
+      return;
+    }
+
+    // Fallback to a role based checkbox
+    const checkboxControl = this.page.getByRole('checkbox', { name: roleRegex });
+    if (await checkboxControl.count()) {
+      await checkboxControl.check({ force: true });
+      return;
+    }
+
+    // Final fallback: locate text and toggle the nearest switch/checkbox
+    const label = this.page.getByText(roleRegex).first();
+    if (await label.count()) {
+      const toggle = label
+        .locator('xpath=./preceding-sibling::*[self::input[@type="checkbox"] or @role="switch"] | ./following-sibling::*[self::input[@type="checkbox"] or @role="switch"]')
+        .first();
+      if (await toggle.count()) {
+        const checked =
+          (await toggle.getAttribute('aria-checked')) === 'true' ||
+          (await toggle.evaluate(node => node.checked ?? false));
+        if (!checked) {
+          await toggle.click({ force: true });
+        }
+      }
+    }
+  }
+
+  /**
   * Add a new user via the Add User form.
   * @param {object} user
   * @param {string} user.firstName
@@ -116,26 +167,10 @@ class UsersPage {
     await this.selectFromDropdown(/nationality/i, nationality);
 
     logger.log(`Set role ${role}`);
-    // The role control may be rendered as a checkbox, switch, or a labelled
-    // input. Try common strategies to ensure the role is actually selected.
-    const roleRegex = new RegExp(role, 'i');
+    await this.setRole(role);
 
-    // First attempt to check a labelled control (covers standard checkboxes).
-    const labelledControl = this.page.getByLabel(roleRegex);
-    if (await labelledControl.count()) {
-      await labelledControl.check({ force: true });
-    } else {
-      // Some roles are implemented as toggle switches.
-      const switchControl = this.page.getByRole('switch', { name: roleRegex });
-      if (await switchControl.count()) {
-        await switchControl.click();
-      } else {
-        // Fallback to a role-based checkbox locator.
-        await this.page
-          .getByRole('checkbox', { name: roleRegex })
-          .check({ force: true });
-      }
-    }
+    // Allow any role toggles to take effect before submitting
+    await this.page.waitForTimeout(500);
 
     logger.log('Submit new user form');
     await this.page.getByRole('button', { name: /create|add|submit/i }).click();
