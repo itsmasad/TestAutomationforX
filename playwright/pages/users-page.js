@@ -117,12 +117,27 @@ class UsersPage {
 
     logger.log(`Set role ${role}`);
     const roleLower = role.toLowerCase();
+
+    // Admin and Accountant roles use toggle switches instead of checkboxes.
+    // Attempt to interact with a switch control first, falling back to a
+    // label click if the switch is not found.
     if (roleLower.includes('admin')) {
-      await this.page.getByLabel(/admin/i).check();
+      const adminSwitch = this.page.getByRole('switch', { name: /admin/i });
+      if (await adminSwitch.count()) {
+        await adminSwitch.click();
+      } else {
+        await this.page.getByLabel(/admin/i).click();
+      }
     }
     if (roleLower.includes('accountant')) {
-      await this.page.getByLabel(/accountant/i).check();
+      const accountantSwitch = this.page.getByRole('switch', { name: /accountant/i });
+      if (await accountantSwitch.count()) {
+        await accountantSwitch.click();
+      } else {
+        await this.page.getByLabel(/accountant/i).click();
+      }
     }
+    // Card Holder role uses a traditional checkbox.
     if (roleLower.includes('card holder')) {
       await this.page.getByLabel(/card holder/i).check();
     }

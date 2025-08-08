@@ -21,7 +21,10 @@ class TeamsPage {
    */
   async addDepartment(name) {
     logger.log('Open add department form');
-    await this.page.locator('#plus').click();
+    // Multiple elements share the same invalid id of "plus". Always
+    // target the first occurrence to avoid strict mode errors when the
+    // locator matches more than one element.
+    await this.page.locator('#plus').first().click();
     logger.log(`Fill department name with "${name}"`);
     await this.page.locator('#departmentName, #depatmentName').fill(name);
     logger.log('Submit new department');
