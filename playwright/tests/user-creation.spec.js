@@ -6,6 +6,11 @@ const testData = require('../testdata');
 
 // Execute user creation for multiple roles
 const roles = ['Admin', 'Accountant', 'Card Holder'];
+const mobileMap = {
+  Admin: UsersPage.randomDigits(9),
+  Accountant: UsersPage.randomDigits(8),
+  'Card Holder': UsersPage.randomDigits(9),
+};
 
 for (const role of roles) {
   test(`create user - ${role}`, async ({ page, context }) => {
@@ -19,6 +24,7 @@ for (const role of roles) {
       lastName: faker.person.lastName().replace(/[^a-zA-Z]/g, ''),
       email: `${faker.string.alpha({ length: 8 }).toLowerCase()}@yopmail.com`,
       role,
+      mobile: mobileMap[role],
       department: testData.teams.departmentName,
       gender: 'Male',
       nationality: 'Kenyan',

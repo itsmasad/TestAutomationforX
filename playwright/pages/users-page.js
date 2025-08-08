@@ -74,17 +74,19 @@ class UsersPage {
   }
 
   /**
-   * Add a new user via the Add User form.
-   * @param {object} user
-   * @param {string} user.firstName
-   * @param {string} user.lastName
+  * Add a new user via the Add User form.
+  * @param {object} user
+  * @param {string} user.firstName
+  * @param {string} user.lastName
   * @param {string} user.email
   * @param {string} user.role
   * @param {string} [user.department]
   * @param {string} [user.gender]
   * @param {string} [user.nationality]
+  * @param {string} [user.mobile] - Optional mobile number. If omitted a random
+  *   value between 8 and 9 digits will be generated.
    */
-  async addUser({ firstName, lastName, email, role, department = 'Marketing', gender = 'Male', nationality = 'Kenyan' }) {
+  async addUser({ firstName, lastName, email, role, department = 'Marketing', gender = 'Male', nationality = 'Kenyan', mobile }) {
     logger.log('Open add user form');
     await this.page.getByRole('button', { name: /add user/i }).click();
 
@@ -95,9 +97,10 @@ class UsersPage {
     logger.log(`Fill email with "${email}"`);
     await this.page.getByLabel(/email/i).fill(email);
 
-    const mobile = UsersPage.randomDigits(10);
-    logger.log(`Fill mobile number with "${mobile}"`);
-    await this.page.getByLabel(/mobile number/i).fill(mobile);
+    const mobileLength = mobile?.length ?? faker.number.int({ min: 8, max: 9 });
+    const mobileNumber = mobile ?? UsersPage.randomDigits(mobileLength);
+    logger.log(`Fill mobile number with "${mobileNumber}"`);
+    await this.page.getByLabel(/mobile number/i).fill(mobileNumber);
 
     const nationalId = UsersPage.randomDigits(11);
     logger.log(`Fill national ID with "${nationalId}"`);
@@ -112,8 +115,17 @@ class UsersPage {
     logger.log(`Select nationality ${nationality}`);
     await this.selectFromDropdown(/nationality/i, nationality);
 
-    logger.log(`Select role ${role}`);
-    await this.selectFromDropdown(/role/i, role);
+    logger.log(`Set role ${role}`);
+    const roleLower = role.toLowerCase();
+    if (roleLower.includes('admin')) {
+      await this.page.getByLabel(/admin/i).check();
+    }
+    if (roleLower.includes('accountant')) {
+      await this.page.getByLabel(/accountant/i).check();
+    }
+    if (roleLower.includes('card holder')) {
+      await this.page.getByLabel(/card holder/i).check();
+    }
 
     logger.log('Submit new user form');
     await this.page.getByRole('button', { name: /create|add|submit/i }).click();
