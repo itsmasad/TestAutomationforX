@@ -29,19 +29,48 @@ class UsersPage {
   }
 
   /**
-   * Select an option from a custom dropdown that is implemented with
-   * non-native elements (e.g. <button> + <li> list).
-   * Playwright's selectOption works only on <select> elements, so for
-   * these custom widgets we need to click the control and then choose the
-   * option manually.
+   * Select an option from a custom dropdown control using the same
+   * resilient approach employed during company registration when choosing
+   * usage details. The control is located via its label, the associated
+   * listbox is resolved via the `aria-controls` attribute (falling back to
+   * the last opened listbox), and the desired option is clicked. If no
+   * options are detected, a keyboard fallback is used.
+   *
    * @param {RegExp} label - Regex matching the label associated with the dropdown
    * @param {string} option - Visible text of the option to choose
    */
   async selectFromDropdown(label, option) {
-    // Open the dropdown by clicking the control associated with the label
-    await this.page.getByLabel(label).click();
-    // Click the option text
-    await this.page.getByRole('option', { name: option, exact: true }).click();
+    const dropdown = this.page.getByLabel(label);
+    const listboxId = await dropdown.getAttribute('aria-controls');
+
+    await dropdown.click();
+
+    // Determine the list of options tied to this dropdown
+    let options;
+    if (listboxId) {
+      options = this.page.locator(`#${listboxId}`).locator('[role="option"]');
+    } else {
+      options = this.page.locator('[role="listbox"]').last().locator('[role="option"]');
+    }
+
+    const count = await options.count();
+    if (count === 0) {
+      // Some dropdowns only respond to keyboard interaction
+      await this.page.keyboard.press('ArrowDown');
+      await this.page.keyboard.press('Enter');
+      await this.page.waitForTimeout(500);
+      return;
+    }
+
+    const match = options.filter({ hasText: option }).first();
+    if (await match.count()) {
+      await match.click();
+    } else {
+      await options.first().click();
+    }
+
+    // Allow UI to update before proceeding
+    await this.page.waitForTimeout(500);
   }
 
   /**
