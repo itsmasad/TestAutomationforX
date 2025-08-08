@@ -19,6 +19,9 @@ for (const role of roles) {
       lastName: faker.person.lastName().replace(/[^a-zA-Z]/g, ''),
       email: `${faker.string.alpha({ length: 8 }).toLowerCase()}@yopmail.com`,
       role,
+      department: testData.teams.departmentName,
+      gender: 'Male',
+      nationality: 'Kenyan',
     });
 
     await expect(page.locator('.Toastify__toast--success')).toBeVisible();

@@ -33,10 +33,13 @@ class UsersPage {
    * @param {object} user
    * @param {string} user.firstName
    * @param {string} user.lastName
-   * @param {string} user.email
-   * @param {string} user.role
+  * @param {string} user.email
+  * @param {string} user.role
+  * @param {string} [user.department]
+  * @param {string} [user.gender]
+  * @param {string} [user.nationality]
    */
-  async addUser({ firstName, lastName, email, role }) {
+  async addUser({ firstName, lastName, email, role, department = 'Marketing', gender = 'Male', nationality = 'Kenyan' }) {
     logger.log('Open add user form');
     await this.page.getByRole('button', { name: /add user/i }).click();
 
@@ -54,6 +57,15 @@ class UsersPage {
     const nationalId = UsersPage.randomDigits(11);
     logger.log(`Fill national ID with "${nationalId}"`);
     await this.page.getByLabel(/national id/i).fill(nationalId);
+
+    logger.log(`Select department ${department}`);
+    await this.page.getByLabel(/department/i).selectOption({ label: department });
+
+    logger.log(`Select gender ${gender}`);
+    await this.page.getByLabel(/gender/i).selectOption({ label: gender });
+
+    logger.log(`Select nationality ${nationality}`);
+    await this.page.getByLabel(/nationality/i).selectOption({ label: nationality });
 
     logger.log(`Select role ${role}`);
     await this.page.getByLabel(/role/i).selectOption({ label: role });
