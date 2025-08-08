@@ -57,7 +57,13 @@ class UsersPage {
     if (count === 0) {
       // Some dropdowns only respond to keyboard interaction
       await this.page.keyboard.press('ArrowDown');
-      await this.page.keyboard.press('Enter');
+      // Click the currently focused option instead of using keyboard selection
+      const focused = this.page.locator(':focus');
+      if (await focused.count()) {
+        await focused.click();
+      } else {
+        await dropdown.click();
+      }
       await this.page.waitForTimeout(500);
       return;
     }
@@ -173,7 +179,8 @@ class UsersPage {
     await this.page.waitForTimeout(500);
 
     logger.log('Submit new user form');
-    await this.page.getByRole('button', { name: /create|add|submit/i }).click();
+    // Use explicit locator for the Save and Invite button to avoid accidental matches
+    await this.page.getByRole('button', { name: 'Save and Invite' }).click();
   }
 }
 
