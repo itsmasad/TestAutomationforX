@@ -3,10 +3,9 @@ const { LoginPage } = require('../pages/login-page');
 const { TeamsPage } = require('../pages/teams-page');
 const testData = require('../testdata');
 
-// Validate creating new departments from the Teams page
-// This suite logs in, opens Teams, adds a department and expects a success toast
-// message "Department created successfully!" then logs out for each department
-// name.
+// Validate creating multiple departments from the Teams page in a single test
+// This test logs in once, adds all departments, verifies success for each, and
+// then logs out.
 
 const departmentNames = [
   testData.teams.departmentName,
@@ -14,13 +13,14 @@ const departmentNames = [
   'Development',
 ];
 
-for (const name of departmentNames) {
-  test(`create department via teams plus icon - ${name}`, async ({ page, context }) => {
-    const loginPage = new LoginPage(page, context);
-    await loginPage.login(testData.credentials.email, testData.credentials.password);
+test('create multiple departments via teams plus icon', async ({ page, context }) => {
+  const loginPage = new LoginPage(page, context);
+  await loginPage.login(testData.credentials.email, testData.credentials.password);
 
-    const teams = new TeamsPage(page);
-    await teams.open();
+  const teams = new TeamsPage(page);
+  await teams.open();
+
+  for (const name of departmentNames) {
     await teams.addDepartment(name);
     const successToast = page
       .locator('.Toastify__toast--success')
@@ -29,7 +29,7 @@ for (const name of departmentNames) {
     await successToast.waitFor({ state: 'visible' });
     await expect(successToast).toHaveText('Department created successfully!');
     await expect(page.getByText(name)).toBeVisible();
+  }
 
-    await loginPage.logout();
-  });
-}
+  await loginPage.logout();
+});
