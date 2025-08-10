@@ -92,7 +92,12 @@ class UsersPage {
     // Try a simple label lookup first which covers standard checkboxes
     const labelledControl = this.page.getByLabel(roleRegex);
     if (await labelledControl.count()) {
-      await labelledControl.check({ force: true });
+      const checked =
+        (await labelledControl.getAttribute('aria-checked')) === 'true' ||
+        (await labelledControl.evaluate(node => node.checked ?? false));
+      if (!checked) {
+        await labelledControl.click({ force: true });
+      }
       return;
     }
 
@@ -109,7 +114,10 @@ class UsersPage {
     // Fallback to a role based checkbox
     const checkboxControl = this.page.getByRole('checkbox', { name: roleRegex });
     if (await checkboxControl.count()) {
-      await checkboxControl.check({ force: true });
+      const checked = await checkboxControl.isChecked();
+      if (!checked) {
+        await checkboxControl.click();
+      }
       return;
     }
 
