@@ -121,12 +121,26 @@ class UsersPage {
       return;
     }
 
-    // Final fallback: locate text and toggle the nearest switch/checkbox
+    // Final fallback: locate text and toggle the nearest switch/checkbox.
+    // Some role toggles (e.g. Admin or Accountant) render the switch without
+    // an accessible label, so we search for any element containing the text
+    // and then look for a checkbox/switch within its ancestors or siblings.
     const label = this.page.getByText(roleRegex).first();
     if (await label.count()) {
-      const toggle = label
-        .locator('xpath=./preceding-sibling::*[self::input[@type="checkbox"] or @role="switch"] | ./following-sibling::*[self::input[@type="checkbox"] or @role="switch"]')
-        .first();
+      // Prefer a control within the same container/ancestor.
+      let toggle = label.locator(
+        'xpath=ancestor::*[descendant-or-self::*[@role="switch" or self::input[@type="checkbox"]]][1]'
+      ).locator('xpath=.//*[@role="switch" or self::input[@type="checkbox"]]').first();
+
+      // Fall back to searching adjacent siblings if none found above.
+      if (!(await toggle.count())) {
+        toggle = label
+          .locator(
+            'xpath=./preceding-sibling::*[self::input[@type="checkbox"] or @role="switch"] | ./following-sibling::*[self::input[@type="checkbox"] or @role="switch"]'
+          )
+          .first();
+      }
+
       if (await toggle.count()) {
         const checked =
           (await toggle.getAttribute('aria-checked')) === 'true' ||
