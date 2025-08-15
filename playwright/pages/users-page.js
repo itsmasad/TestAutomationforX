@@ -90,6 +90,7 @@ class UsersPage {
    * The dropdown is opened by clicking the div element and the option
    * is navigated to using the keyboard (ArrowDown + Enter) within the
    * last opened listbox.
+
    *
    * @param {string} divId - Id attribute of the div acting as the dropdown.
    * @param {string} option - Visible text of the option to choose.
@@ -121,6 +122,7 @@ class UsersPage {
       }
     }
     await this.page.keyboard.press('Enter');
+
 
     await this.page.waitForTimeout(500);
   }
