@@ -88,7 +88,9 @@ class UsersPage {
   /**
    * Select an option from a dropdown located by a div id.
    * The dropdown is opened by clicking the div element and the option
-   * is chosen from the last opened listbox.
+   * is navigated to using the keyboard (ArrowDown + Enter) within the
+   * last opened listbox.
+
    *
    * @param {string} divId - Id attribute of the div acting as the dropdown.
    * @param {string} option - Visible text of the option to choose.
@@ -102,12 +104,25 @@ class UsersPage {
       .last()
       .locator('[role="option"]');
 
-    const match = options.filter({ hasText: option }).first();
-    if (await match.count()) {
-      await match.click();
-    } else {
-      await options.first().click();
+    const count = await options.count();
+    let index = 0;
+    for (let i = 0; i < count; i++) {
+      const text = await options.nth(i).innerText();
+      if (text.trim().toLowerCase() === option.toLowerCase()) {
+        index = i;
+        break;
+      }
     }
+
+    if (count === 0) {
+      await this.page.keyboard.press('ArrowDown');
+    } else {
+      for (let i = 0; i <= index; i++) {
+        await this.page.keyboard.press('ArrowDown');
+      }
+    }
+    await this.page.keyboard.press('Enter');
+
 
     await this.page.waitForTimeout(500);
   }
