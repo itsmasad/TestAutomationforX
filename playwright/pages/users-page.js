@@ -137,10 +137,14 @@ class UsersPage {
   async setRole(role) {
     const roleRegex = new RegExp(role, 'i');
 
-    // Admin and Accountant toggles respond to a simple click on the element
-    // containing the role text, so we avoid the previous complex fallbacks.
-    if (/admin|accountant/i.test(role)) {
-      await this.page.getByText(roleRegex).first().click();
+    // Admin and Accountant toggles can be toggled directly via their element ids.
+    if (/admin/i.test(role)) {
+      await this.page.locator('#isAdmin').click();
+      return;
+    }
+
+    if (/accountant/i.test(role)) {
+      await this.page.locator('#isAccountant').click();
       return;
     }
 
