@@ -24,6 +24,7 @@ module.exports = {
     if (password) this.credentials.password = password;
     try {
       fs.writeFileSync(credPath, JSON.stringify(this.credentials));
+      storedCreds = { ...this.credentials };
     } catch {
       // ignore file write errors
     }
