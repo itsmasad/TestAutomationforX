@@ -52,49 +52,20 @@ class CompanyVerificationPage {
     });
     await usageForm.waitFor();
 
-    // Usage detail questions are presented as a series of dropdown buttons
-    // with ids following the pattern `question_<number>`. Determine how many
-    // of these dropdowns are rendered and select a random option for each.
-    const usageDropdowns = usageForm.locator('button[id^="question_"]');
+    // Usage detail questions are presented as a series of native `<select>`
+    // elements with ids following the pattern `question_<number>`. Determine
+    // how many of these dropdowns are rendered and choose a random option for
+    // each.
+    const usageDropdowns = usageForm.locator('select[id^="question_"]');
     const dropdownCount = await usageDropdowns.count();
 
     for (let i = 0; i < dropdownCount; i++) {
       const dropdown = usageDropdowns.nth(i);
-
-      // Some dropdown implementations expose the id of the listbox they
-      // control via the `aria-controls` attribute. Capture it before opening
-      // the dropdown so that the correct list of options can be targeted even
-      // if multiple dropdowns are present on the page.
-      const listboxId = await dropdown.getAttribute('aria-controls');
-
-      await dropdown.click();
-
-      // Resolve the options associated with this dropdown. Prefer using the
-      // explicit listbox id when available, but fall back to the last opened
-      // listbox as a heuristic for frameworks that dynamically insert the menu
-      // into the DOM.
-      let options;
-      if (listboxId) {
-        const listbox = this.page.locator(`#${listboxId}`);
-        options = listbox.locator('[role="option"]');
-      } else {
-        const listbox = this.page.locator('[role="listbox"]').last();
-        options = listbox.locator('[role="option"]');
-      }
-
+      const options = dropdown.locator('option');
       const count = await options.count();
-
-      if (count === 0) {
-        // Some dropdowns rely solely on keyboard interaction. If no options are
-        // detected, fall back to selecting the first entry via ArrowDown + Enter.
-        await this.page.keyboard.press('ArrowDown');
-        await this.page.keyboard.press('Enter');
-        await this.page.waitForTimeout(500);
-        continue;
-      }
-
+      if (count === 0) continue;
       const index = Math.floor(Math.random() * count);
-      await options.nth(index).click();
+      await dropdown.selectOption({ index });
       // Give the UI a moment to register the selection before moving on to the
       // next dropdown.
       await this.page.waitForTimeout(500);
