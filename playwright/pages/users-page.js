@@ -40,30 +40,36 @@ class UsersPage {
    * @param {string} option - Visible text of the option to choose
    */
   async selectFromDropdown(label, option) {
-    const dropdown = this.page.getByLabel(label);
-    const listboxId = await dropdown.getAttribute('aria-controls');
+    // Some dropdowns expose the accessible name on a button while others
+    // associate the label via `aria-labelledby`. Try a role-based lookup
+    // first and fall back to label association if necessary.
+    let dropdown = this.page.getByRole('button', { name: label });
+    if (await dropdown.count() === 0) {
+      dropdown = this.page.getByLabel(label);
+    }
 
+    const listboxId = await dropdown.getAttribute('aria-controls');
     await dropdown.click();
 
     // Determine the list of options tied to this dropdown
     let options;
     if (listboxId) {
-      options = this.page.locator(`#${listboxId}`).locator('[role="option"]');
+      options = this.page
+        .locator(`#${listboxId}`)
+        .locator('[role="option"]');
     } else {
-      options = this.page.locator('[role="listbox"]').last().locator('[role="option"]');
+      options = this.page
+        .locator('[role="listbox"]').last()
+        .locator('[role="option"]');
     }
 
     const count = await options.count();
     if (count === 0) {
-      // Some dropdowns only respond to keyboard interaction
+      // Some dropdowns only respond to keyboard interaction. Mirror the
+      // approach used during company usage selection by relying on the
+      // keyboard to choose the first item.
       await this.page.keyboard.press('ArrowDown');
-      // Click the currently focused option instead of using keyboard selection
-      const focused = this.page.locator(':focus');
-      if (await focused.count()) {
-        await focused.click();
-      } else {
-        await dropdown.click();
-      }
+      await this.page.keyboard.press('Enter');
       await this.page.waitForTimeout(500);
       return;
     }
