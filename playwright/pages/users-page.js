@@ -137,6 +137,13 @@ class UsersPage {
   async setRole(role) {
     const roleRegex = new RegExp(role, 'i');
 
+    // Admin and Accountant toggles respond to a simple click on the element
+    // containing the role text, so we avoid the previous complex fallbacks.
+    if (/admin|accountant/i.test(role)) {
+      await this.page.getByText(roleRegex).first().click();
+      return;
+    }
+
     // Try a simple label lookup first which covers standard checkboxes
     const labelledControl = this.page.getByLabel(roleRegex);
     if (await labelledControl.count()) {
@@ -167,36 +174,6 @@ class UsersPage {
         await checkboxControl.click();
       }
       return;
-    }
-
-    // Final fallback: locate text and toggle the nearest switch/checkbox.
-    // Some role toggles (e.g. Admin or Accountant) render the switch without
-    // an accessible label, so we search for any element containing the text
-    // and then look for a checkbox/switch within its ancestors or siblings.
-    const label = this.page.getByText(roleRegex).first();
-    if (await label.count()) {
-      // Prefer a control within the same container/ancestor.
-      let toggle = label.locator(
-        'xpath=ancestor::*[descendant-or-self::*[@role="switch" or self::input[@type="checkbox"]]][1]'
-      ).locator('xpath=.//*[@role="switch" or self::input[@type="checkbox"]]').first();
-
-      // Fall back to searching adjacent siblings if none found above.
-      if (!(await toggle.count())) {
-        toggle = label
-          .locator(
-            'xpath=./preceding-sibling::*[self::input[@type="checkbox"] or @role="switch"] | ./following-sibling::*[self::input[@type="checkbox"] or @role="switch"]'
-          )
-          .first();
-      }
-
-      if (await toggle.count()) {
-        const checked =
-          (await toggle.getAttribute('aria-checked')) === 'true' ||
-          (await toggle.evaluate(node => node.checked ?? false));
-        if (!checked) {
-          await toggle.click({ force: true });
-        }
-      }
     }
   }
 
