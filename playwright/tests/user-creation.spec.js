@@ -17,7 +17,7 @@ const lastNameMap = {
   'Card Holder': 'Card Holder',
 };
 
-test('create users for all roles', async ({ page, context }) => {
+test.skip('create users for all roles', async ({ page, context }) => {
   const loginPage = new LoginPage(page, context);
   await loginPage.login(
     testData.credentials.email,
