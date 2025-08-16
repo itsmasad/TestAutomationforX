@@ -14,9 +14,9 @@ class TaxCodesPage {
     logger.log('Navigate to settings');
     await this.page.getByRole('link', { name: /settings/i }).click();
     logger.log('Open accounting tab');
-    await this.page.getByRole('link', { name: /accounting/i }).click();
+    await this.page.getByRole('tab', { name: 'Accounting' }).click();
     logger.log('Open tax codes section');
-    await this.page.getByRole('link', { name: /tax codes/i }).click();
+    await this.page.getByRole('tab', { name: 'Tax codes' }).click();
   }
 
   /**
@@ -26,13 +26,13 @@ class TaxCodesPage {
    */
   async addTaxCode(name, rate) {
     logger.log('Open add tax code form');
-    await this.page.getByRole('button', { name: /add new tax/i }).click();
+    await this.page.getByRole('button', { name: '+ Add new' }).click();
     logger.log(`Fill tax code name with "${name}"`);
-    await this.page.getByLabel(/tax name/i).fill(name);
+    await this.page.getByRole('textbox', { name: 'Name' }).fill(name);
     logger.log(`Fill tax rate with "${rate}"`);
-    await this.page.getByLabel(/tax rate/i).fill(String(rate));
+    await this.page.getByRole('textbox', { name: 'Tax rate' }).fill(String(rate));
     logger.log('Submit new tax code');
-    await this.page.getByRole('button', { name: /^add$/i }).click();
+    await this.page.getByRole('button', { name: 'Add', exact: true }).click();
   }
 
   /**
