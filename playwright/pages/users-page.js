@@ -99,31 +99,25 @@ class UsersPage {
     const dropdown = this.page.locator(`div#${divId}`);
     await dropdown.click();
 
-    const options = this.page
-      .locator('[role="listbox"]')
-      .last()
-      .locator('[role="option"]');
+    // Navigate the dropdown using only keyboard interactions.
+    // Repeatedly press ArrowDown until the highlighted option matches
+    // the desired text, then confirm with Enter.
+    for (let i = 0; i < 20; i++) {
+      await this.page.keyboard.press('ArrowDown');
+      const active = this.page
+        .locator('[role="listbox"]')
+        .last()
+        .locator('[role="option"][aria-selected="true"]');
 
-    const count = await options.count();
-    let index = 0;
-    for (let i = 0; i < count; i++) {
-      const text = await options.nth(i).innerText();
-      if (text.trim().toLowerCase() === option.toLowerCase()) {
-        index = i;
+      if ((await active.count()) === 0) continue;
+
+      const text = (await active.innerText()).trim().toLowerCase();
+      if (text === option.toLowerCase()) {
         break;
       }
     }
 
-    if (count === 0) {
-      await this.page.keyboard.press('ArrowDown');
-    } else {
-      for (let i = 0; i <= index; i++) {
-        await this.page.keyboard.press('ArrowDown');
-      }
-    }
     await this.page.keyboard.press('Enter');
-
-
     await this.page.waitForTimeout(500);
   }
 
