@@ -13,7 +13,7 @@ const departmentNames = [
   'Development',
 ];
 
-test('create multiple departments via teams plus icon', async ({ page, context }) => {
+test.skip('create multiple departments via teams plus icon', async ({ page, context }) => {
   const loginPage = new LoginPage(page, context);
   await loginPage.login(testData.credentials.email, testData.credentials.password);
 

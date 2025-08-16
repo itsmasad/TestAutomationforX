@@ -55,6 +55,10 @@ module.exports = {
   teams: {
     departmentName: 'Marketing',
   },
+  taxCode: {
+    name: 'FBR',
+    rate: '40',
+  },
   company: {
     password: 'xpendless@A1',
     addressLine1: '123 Verification St',
