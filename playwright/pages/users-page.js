@@ -85,42 +85,7 @@ class UsersPage {
     await this.page.waitForTimeout(500);
   }
 
-  /**
-   * Select an option from a dropdown located by a div id.
-   * The dropdown is opened by clicking the div element and the option
-   * is navigated to using the keyboard (ArrowDown + Enter) within the
-   * last opened listbox.
-
-   *
-   * @param {string} divId - Id attribute of the div acting as the dropdown.
-   * @param {string} option - Visible text of the option to choose.
-   */
-  async selectFromDiv(divId, option) {
-    const dropdown = this.page.locator(`div#${divId}`);
-    await dropdown.click();
-
-    // Navigate the dropdown using only keyboard interactions.
-    // Repeatedly press ArrowDown until the highlighted option matches
-    // the desired text, then confirm with Enter.
-    for (let i = 0; i < 20; i++) {
-      await this.page.keyboard.press('ArrowDown');
-      const active = this.page
-        .locator('[role="listbox"]')
-        .last()
-        .locator('[role="option"][aria-selected="true"]');
-
-      if ((await active.count()) === 0) continue;
-
-      const text = (await active.innerText()).trim().toLowerCase();
-      if (text === option.toLowerCase()) {
-        break;
-      }
-    }
-
-    await this.page.keyboard.press('Enter');
-    await this.page.waitForTimeout(500);
-  }
-
+  
   /**
    * Ensure the given role is enabled prior to submitting the form. Some roles
    * are rendered as checkboxes while others use toggle switches without an
@@ -209,13 +174,13 @@ class UsersPage {
     await this.page.getByLabel(/national id/i).fill(nationalId);
 
     logger.log(`Select department ${department}`);
-    await this.selectFromDiv('selectDepartment', department);
+    await this.selectFromDropdown(/department/i, department);
 
     logger.log(`Select gender ${gender}`);
-    await this.selectFromDiv('selectGender', gender);
+    await this.selectFromDropdown(/gender/i, gender);
 
     logger.log(`Select nationality ${nationality}`);
-    await this.selectFromDiv('selectNationality', nationality);
+    await this.selectFromDropdown(/nationality/i, nationality);
 
     logger.log(`Set role ${role}`);
     await this.setRole(role);
