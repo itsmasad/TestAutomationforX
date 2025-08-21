@@ -28,6 +28,22 @@ module.exports = {
     } catch {
       // ignore file write errors
     }
+    // also update this file so the defaults reflect the latest credentials
+    try {
+      const fileContent = fs
+        .readFileSync(__filename, 'utf8')
+        .replace(
+          /email: storedCreds.email \|\| '.*',/,
+          `email: storedCreds.email || '${this.credentials.email}',`
+        )
+        .replace(
+          /password: storedCreds.password \|\| '.*',/,
+          `password: storedCreds.password || '${this.credentials.password}',`
+        );
+      fs.writeFileSync(__filename, fileContent);
+    } catch {
+      // ignore file update errors
+    }
   },
   otp: {
     mobile: '123456',
