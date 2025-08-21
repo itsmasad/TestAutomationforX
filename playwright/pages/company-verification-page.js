@@ -62,13 +62,12 @@ class CompanyVerificationPage {
     for (let i = 0; i < dropdownCount; i++) {
       const dropdown = usageDropdowns.nth(i);
       await dropdown.click();
-      // Options are rendered in an overlay list. Choose a random visible option
-      // after expanding the dropdown.
-      const options = this.page.locator('[role="option"]:visible');
-      const count = await options.count();
-      if (count === 0) continue;
-      const index = Math.floor(Math.random() * count);
-      await options.nth(index).click();
+      // Dropdown options do not expose selectable elements, so rely on
+      // keyboard interaction: ArrowDown to highlight the first option then
+      // Enter to confirm the choice.
+      await this.page.keyboard.press('ArrowDown');
+      await this.page.keyboard.press('Enter');
+
       // Give the UI a moment to register the selection before moving on to the
       // next dropdown.
       await this.page.waitForTimeout(500);
