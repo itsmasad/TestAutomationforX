@@ -11,6 +11,13 @@ if (!envName) {
 
 process.env.CURRENT_ENV = envName;
 
+// Create a unique log file path for this test run and expose it via the
+// environment so that every worker writes to the same file.
+const logsDir = path.join(__dirname, 'logs');
+fs.mkdirSync(logsDir, { recursive: true });
+const runTimestamp = new Date().toISOString().replace(/[:.]/g, '-');
+process.env.LOG_FILE = path.join(logsDir, `${runTimestamp}.log`);
+
 // Determine browser name from command line options. Default to chromium.
 let browser = 'chromium';
 for (const arg of args.slice(1)) {
