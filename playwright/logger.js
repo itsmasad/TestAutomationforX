@@ -13,6 +13,7 @@ const defaultFile = path.join(
 );
 const filePath = process.env.LOG_FILE || defaultFile;
 let stream = fs.createWriteStream(filePath, { flags: 'a' });
+let isFirstTest = true;
 
 function start(testTitle) {
   if (!stream) {
@@ -20,9 +21,14 @@ function start(testTitle) {
     // run timestamp so all logs for this execution stay in one file.
     stream = fs.createWriteStream(filePath, { flags: 'a' });
   }
-  // Separate logs for different tests with a blank line and start each
-  // section with the test title.
-  stream.write(`\n${testTitle}\n`);
+  // Write the test title and ensure there's a blank line separating logs
+  // from different tests. Avoid a leading newline at the very top of the
+  // file so the first test title appears immediately.
+  if (!isFirstTest) {
+    stream.write('\n');
+  }
+  stream.write(`${testTitle}\n`);
+  isFirstTest = false;
 }
 
 function log(message) {
