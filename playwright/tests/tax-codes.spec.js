@@ -13,6 +13,10 @@ test.skip('add new tax code', async ({ page, context }) => {
   await taxCodes.open();
   await taxCodes.addTaxCode(testData.taxCode.name, testData.taxCode.rate);
 
+  const successToast = page.locator('.Toastify__toast--success');
+  await expect(successToast).toBeVisible();
+  await successToast.waitFor({ state: 'hidden' });
+
   const row = taxCodes.findTaxCodeRow(testData.taxCode.name);
   await expect(row).toContainText(testData.taxCode.name);
   await expect(row).toContainText(`${testData.taxCode.rate}`);
