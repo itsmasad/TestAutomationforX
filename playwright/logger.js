@@ -30,6 +30,7 @@ function start(testTitle) {
   // Write the test title followed by a blank line so that the first log
   // entry for the test is separated for readability.
   stream.write(`${testTitle}\n\n`);
+
   isFirstTest = false;
 }
 
