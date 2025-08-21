@@ -67,6 +67,7 @@ class CompanyVerificationPage {
       // Enter to confirm the choice.
       await this.page.keyboard.press('ArrowDown');
       await this.page.keyboard.press('Enter');
+
       // Give the UI a moment to register the selection before moving on to the
       // next dropdown.
       await this.page.waitForTimeout(500);
