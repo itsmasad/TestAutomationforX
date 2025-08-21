@@ -52,20 +52,21 @@ class CompanyVerificationPage {
     });
     await usageForm.waitFor();
 
-    // Usage detail questions are presented as a series of native `<select>`
-    // elements with ids following the pattern `question_<number>`. Determine
-    // how many of these dropdowns are rendered and choose a random option for
-    // each.
-    const usageDropdowns = usageForm.locator('select[id^="question_"]');
+    // Usage detail questions are implemented as custom dropdown controls using
+    // `<button>` elements with ids following the pattern `question_<number>`.
+    // Determine how many of these dropdowns are rendered and choose a random
+    // option for each.
+    const usageDropdowns = usageForm.locator('button[id^="question_"]');
     const dropdownCount = await usageDropdowns.count();
 
     for (let i = 0; i < dropdownCount; i++) {
       const dropdown = usageDropdowns.nth(i);
-      const options = dropdown.locator('option');
-      const count = await options.count();
-      if (count === 0) continue;
-      const index = Math.floor(Math.random() * count);
-      await dropdown.selectOption({ index });
+      await dropdown.click();
+      // Dropdown options do not expose selectable elements, so rely on
+      // keyboard interaction: ArrowDown to highlight the first option then
+      // Enter to confirm the choice.
+      await this.page.keyboard.press('ArrowDown');
+      await this.page.keyboard.press('Enter');
       // Give the UI a moment to register the selection before moving on to the
       // next dropdown.
       await this.page.waitForTimeout(500);
