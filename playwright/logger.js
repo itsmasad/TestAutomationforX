@@ -1,13 +1,17 @@
 const fs = require('fs');
 const path = require('path');
 
-// Create a single log file for the entire test run. The timestamp is
-// generated once when this module is first required and reused for all
-// subsequent calls so that every test writes into the same file.
+// Determine the log file path for this run. `run-tests.js` sets the
+// `LOG_FILE` environment variable so that all worker processes append to
+// the same file. If it is not provided (e.g. when a test is invoked
+// directly), fall back to creating a file with a fresh timestamp.
 const logsDir = path.join(__dirname, 'logs');
 fs.mkdirSync(logsDir, { recursive: true });
-const runTimestamp = new Date().toISOString().replace(/[:.]/g, '-');
-const filePath = path.join(logsDir, `${runTimestamp}.log`);
+const defaultFile = path.join(
+  logsDir,
+  `${new Date().toISOString().replace(/[:.]/g, '-')}.log`
+);
+const filePath = process.env.LOG_FILE || defaultFile;
 let stream = fs.createWriteStream(filePath, { flags: 'a' });
 
 function start(testTitle) {
@@ -16,7 +20,9 @@ function start(testTitle) {
     // run timestamp so all logs for this execution stay in one file.
     stream = fs.createWriteStream(filePath, { flags: 'a' });
   }
-  stream.write(`\n${new Date().toISOString()} - Test: ${testTitle}\n`);
+  // Separate logs for different tests with a blank line and start each
+  // section with the test title.
+  stream.write(`\n${testTitle}\n`);
 }
 
 function log(message) {
