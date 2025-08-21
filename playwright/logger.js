@@ -27,9 +27,10 @@ function start(testTitle) {
   if (!isFirstTest) {
     stream.write('\n');
   }
-  // Write the test title followed by a blank line so that the first log
-  // entry for the test is separated for readability.
-  stream.write(`${testTitle}\n\n`);
+  // Write the test title. A blank line before subsequent titles separates
+  // logs from different tests while keeping the title and first log
+  // adjacent for readability.
+  stream.write(`${testTitle}\n`);
 
   isFirstTest = false;
 }
