@@ -16,7 +16,9 @@ process.env.CURRENT_ENV = envName;
 const logsDir = path.join(__dirname, 'logs');
 fs.mkdirSync(logsDir, { recursive: true });
 const runTimestamp = new Date().toISOString().replace(/[:.]/g, '-');
-process.env.LOG_FILE = path.join(logsDir, `${runTimestamp}.log`);
+// Expose a single log file path so all workers append to the same file.
+const logFile = path.join(logsDir, `${runTimestamp}.log`);
+process.env.LOG_FILE = logFile;
 
 // Determine browser name from command line options. Default to chromium.
 let browser = 'chromium';
