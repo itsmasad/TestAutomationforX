@@ -31,14 +31,14 @@ test.describe.serial('petty cash', () => {
   test('add cash', async () => {
     await pettyCash.open();
     await pettyCash.addCash(testData.pettyCash.add.amount, testData.pettyCash.add.description);
-    await expect(page.locator('.Toastify__toast--success')).toBeVisible();
+    await expect(page.locator('.Toastify__toast--success').last()).toBeVisible();
   });
 
   // Validate withdrawing money from petty cash
   test('withdraw cash', async () => {
     await pettyCash.open();
     await pettyCash.withdrawCash(testData.pettyCash.withdraw.amount, testData.pettyCash.withdraw.description);
-    await expect(page.locator('.Toastify__toast--success')).toBeVisible();
+    await expect(page.locator('.Toastify__toast--success').last()).toBeVisible();
   });
 });
 
