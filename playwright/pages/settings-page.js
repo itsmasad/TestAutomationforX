@@ -71,13 +71,19 @@ class SettingsPage {
     await addBtn.click();
 
     logger.log('Select category icon');
-    // Prefer a dedicated combobox, otherwise fall back to a button labelled
-    // "Icon". Selecting the first option is sufficient for the test.
+    // The icon picker has gone through multiple implementations. Try common
+    // selectors in order of priority and fall back to a generic label lookup.
     let iconDropdown = this.page.locator('#category_icon');
+    if (await iconDropdown.count() === 0) {
+      iconDropdown = this.page.locator('#selectIcon');
+    }
     if (await iconDropdown.count() === 0) {
       iconDropdown = this.page.getByRole('combobox', { name: /icon/i });
       if (await iconDropdown.count() === 0) {
         iconDropdown = this.page.getByRole('button', { name: /icon/i });
+        if (await iconDropdown.count() === 0) {
+          iconDropdown = this.page.getByLabel(/icon/i);
+        }
       }
     }
     await iconDropdown.click();
