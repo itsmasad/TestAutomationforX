@@ -4,21 +4,19 @@ const path = require('path');
 // Determine the log file path for this run. `run-tests.js` sets the
 // `LOG_FILE` environment variable so that all worker processes append to
 // the same file. If it is not provided (e.g. when a test is invoked
-// directly), fall back to creating a file with a fresh timestamp.
+// directly), fall back to a shared "run.log" so parallel workers do not
+// create multiple empty files.
 const logsDir = path.join(__dirname, 'logs');
 fs.mkdirSync(logsDir, { recursive: true });
-const defaultFile = path.join(
-  logsDir,
-  `${new Date().toISOString().replace(/[:.]/g, '-')}.log`
-);
+const defaultFile = path.join(logsDir, 'run.log');
 const filePath = process.env.LOG_FILE || defaultFile;
-let stream = fs.createWriteStream(filePath, { flags: 'a' });
+let stream = null;
 let isFirstTest = true;
 
 function start(testTitle) {
   if (!stream) {
-    // In case the stream was manually closed, recreate it using the same
-    // run timestamp so all logs for this execution stay in one file.
+    // Lazily create the stream so workers that never run a test do not
+    // generate empty log files. All workers append to the same file path.
     stream = fs.createWriteStream(filePath, { flags: 'a' });
   }
   // Write the test title and ensure there's a blank line separating logs

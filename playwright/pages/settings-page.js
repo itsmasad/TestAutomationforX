@@ -62,20 +62,37 @@ class SettingsPage {
    */
   async addCategoryGroup(name) {
     logger.log('Open add category form');
-    await this.page.locator('#add_new_category').click();
+    // The selector changed across UI revisions, so fall back to the
+    // accessible "Add new" button if the id is missing.
+    let addBtn = this.page.locator('#add_new_category');
+    if (await addBtn.count() === 0) {
+      addBtn = this.page.getByRole('button', { name: /\+\s*add new/i });
+    }
+    await addBtn.click();
+
     logger.log('Select category icon');
+    // Prefer a dedicated combobox, otherwise fall back to a button labelled
+    // "Icon". Selecting the first option is sufficient for the test.
     let iconDropdown = this.page.locator('#category_icon');
     if (await iconDropdown.count() === 0) {
-      iconDropdown = this.page.getByRole('button', { name: /icon/i });
+      iconDropdown = this.page.getByRole('combobox', { name: /icon/i });
+      if (await iconDropdown.count() === 0) {
+        iconDropdown = this.page.getByRole('button', { name: /icon/i });
+      }
     }
     await iconDropdown.click();
-    await this.page.keyboard.press('ArrowDown');
-    await this.page.keyboard.press('Enter');
-    await this.page.waitForTimeout(500);
+    // Choose the first available option from the list.
+    await this.page.getByRole('option').first().click();
+
     logger.log(`Fill category name with "${name}"`);
     await this.page.getByRole('textbox', { name: /name/i }).fill(name);
+
     logger.log('Confirm new category group');
-    await this.page.locator('#confirm_add_group').click();
+    let confirmBtn = this.page.locator('#confirm_add_group');
+    if (await confirmBtn.count() === 0) {
+      confirmBtn = this.page.getByRole('button', { name: /^add$/i });
+    }
+    await confirmBtn.click();
   }
 
   /**
