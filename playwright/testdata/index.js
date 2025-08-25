@@ -75,6 +75,9 @@ module.exports = {
     name: 'FBR',
     rate: '40',
   },
+  categoryGroup: {
+    name: 'Entertainment',
+  },
   company: {
     password: 'xpendless@A1',
     addressLine1: '123 Verification St',
