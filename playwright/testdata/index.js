@@ -11,7 +11,7 @@ try {
 
 module.exports = {
   credentials: {
-    email: storedCreds.email || 'kailey781@yopmail.com',
+    email: storedCreds.email || 'susanna732@yopmail.com',
     password: storedCreds.password || 'xpendless@A1',
   },
   /**

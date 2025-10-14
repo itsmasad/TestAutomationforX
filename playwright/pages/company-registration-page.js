@@ -67,8 +67,10 @@ class CompanyRegistrationPage {
     await this.page.getByRole('button', { name: /continue|next/i }).click();
 
     await this.page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
-    // Mobile OTP is currently static during development
-    const digits = testData.otp.mobile.split('');
+    // Fetch mobile OTP from Yopmail inbox "xpendless_mobile_otp" with same logic as email OTP
+    const mobileOtp = await LoginPage.fetchEmailOtp(this.context, 'xpendless_mobile_otp');
+    logger.log(`Fetched mobile OTP ${mobileOtp} from xpendless_mobile_otp`);
+    const digits = mobileOtp.split('');
     for (let i = 0; i < digits.length; i++) {
       logger.log(`Fill mobile OTP digit ${digits[i]} in position ${i + 1}`);
       await this.page.getByRole('textbox', { name: `Please enter OTP character ${i + 1}` }).fill(digits[i]);

@@ -40,7 +40,7 @@ class LoginPage {
   /** Navigate to the application's login page. */
   async goto() {
     await this.page.goto('');
-    logger.log('Navigated to /login');
+    logger.log('Navigated to home page');
   }
 
   /**
