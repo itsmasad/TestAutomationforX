@@ -23,13 +23,15 @@ class CompanyRegistrationPage {
     // Generate basic details for the administrator and company
     const adminFirst = faker.person.firstName().replace(/[^a-zA-Z]/g, '');
     const adminLast = faker.person.lastName().replace(/[^a-zA-Z]/g, '');
-    const email = `${adminFirst.toLowerCase()}${faker.number.int({ min: 100, max: 999 })}@yopmail.com`;
-    const companyName = `${adminFirst} Limited ${faker.number.int({ min: 100, max: 999 })}`;
+    const suffix = faker.number.int({ min: 100, max: 999 }).toString();
+    const email = `${adminFirst.toLowerCase()}${suffix}@yopmail.com`;
+    const companyName = `${adminFirst} Limited ${suffix}`;
     const mobile = `${Math.floor(100000000 + Math.random() * 900000000)}`;
 
     // expose generated values for later verification steps
     this.mobile = mobile;
     this.companyName = companyName;
+    this.companySuffix = suffix;
     this.email = email;
     const password = testData.company.password;
 
@@ -67,8 +69,8 @@ class CompanyRegistrationPage {
     await this.page.getByRole('button', { name: /continue|next/i }).click();
 
     await this.page.getByRole('textbox', { name: 'Please enter OTP character 1' }).waitFor();
-    // Fetch mobile OTP from Yopmail inbox "xpendless_mobile_otp" with same logic as email OTP
-    const mobileOtp = await LoginPage.fetchEmailOtp(this.context, 'xpendless_mobile_otp');
+    // Fetch mobile OTP from shared mobile inbox using helper
+    const mobileOtp = await LoginPage.fetchMobileOtp(this.context);
     logger.log(`Fetched mobile OTP ${mobileOtp} from xpendless_mobile_otp`);
     const digits = mobileOtp.split('');
     for (let i = 0; i < digits.length; i++) {
@@ -121,7 +123,8 @@ class CompanyRegistrationPage {
 
     await this.page.getByRole('link', { name: /dashboard/i }).waitFor();
 
-    // Persist the newly created admin credentials so subsequent tests can reuse them
+    // Persist the newly created admin credentials and company metadata
+    testData.updateCompanyMeta(companyName, suffix);
     testData.updateCredentials(email, password);
   }
 }

@@ -37,6 +37,16 @@ class LoginPage {
     return body.match(/\b(\d{6})\b/)[1];
   }
 
+  /**
+   * Retrieve the mobile verification OTP from the shared mobile inbox.
+   * @param {import('@playwright/test').BrowserContext} context
+   * @returns {Promise<string>}
+   */
+  static async fetchMobileOtp(context) {
+    logger.log('Fetching mobile OTP from xpendless_mobile_otp@yopmail.com');
+    return await LoginPage.fetchEmailOtp(context, 'xpendless_mobile_otp');
+  }
+
   /** Navigate to the application's login page. */
   async goto() {
     await this.page.goto('');

@@ -22,7 +22,7 @@ test.describe.serial('company onboarding', () => {
   });
 
   // Test: company registration and verification flow using POM
-  test('create and verify company account', async () => {
+  test.only('create and verify company account', async () => {
     const regPage = new CompanyRegistrationPage(page, context);
     await regPage.registerCompany();
     await expect(page.getByRole('link', { name: /dashboard/i })).toBeVisible();

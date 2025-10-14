@@ -11,9 +11,23 @@ try {
 
 module.exports = {
   credentials: {
-    email: storedCreds.email || 'susanna732@yopmail.com',
+    email: storedCreds.email || 'olen346@yopmail.com',
     password: storedCreds.password || 'xpendless@A1',
   },
+  // Company metadata captured during company registration
+  companyMeta: {
+    name: storedCreds.companyName || '',
+    suffix: storedCreds.companySuffix || '',
+  },
+  // Role credentials persisted after user creation/invite
+  roles: (() => {
+    const sc = storedCreds.roles || {};
+    return {
+      Admin: { email: (sc.Admin && sc.Admin.email) || '', password: (sc.Admin && sc.Admin.password) || '' },
+      Accountant: { email: (sc.Accountant && sc.Accountant.email) || '', password: (sc.Accountant && sc.Accountant.password) || '' },
+      Cardholder: { email: (sc.Cardholder && sc.Cardholder.email) || '', password: (sc.Cardholder && sc.Cardholder.password) || '' },
+    };
+  })(),
   /**
    * Update the credentials used by tests at runtime.
    * @param {string} email - The email address to use for subsequent logins.
@@ -23,8 +37,12 @@ module.exports = {
     if (email) this.credentials.email = email;
     if (password) this.credentials.password = password;
     try {
-      fs.writeFileSync(credPath, JSON.stringify(this.credentials));
-      storedCreds = { ...this.credentials };
+      const current = fs.existsSync(credPath)
+        ? JSON.parse(fs.readFileSync(credPath, 'utf8'))
+        : {};
+      const merged = { ...current, ...this.credentials };
+      fs.writeFileSync(credPath, JSON.stringify(merged));
+      storedCreds = { ...merged };
     } catch {
       // ignore file write errors
     }
@@ -43,6 +61,60 @@ module.exports = {
       fs.writeFileSync(__filename, fileContent);
     } catch {
       // ignore file update errors
+    }
+  },
+  /**
+   * Persist company name and 3-digit suffix for reuse in user creation.
+   * @param {string} name - Company legal name (e.g., "Kailey Limited 781").
+   * @param {string} suffix - Three digit string used during registration (e.g., "781").
+   */
+  updateCompanyMeta(name, suffix) {
+    if (name) this.companyMeta.name = name;
+    if (suffix) this.companyMeta.suffix = suffix;
+    try {
+      const current = fs.existsSync(credPath)
+        ? JSON.parse(fs.readFileSync(credPath, 'utf8'))
+        : {};
+      const merged = {
+        ...current,
+        companyName: this.companyMeta.name,
+        companySuffix: this.companyMeta.suffix,
+        roles: current.roles,
+      };
+      fs.writeFileSync(credPath, JSON.stringify(merged));
+      storedCreds = { ...merged };
+    } catch {
+      // ignore file write errors
+    }
+  },
+  /**
+   * Persist role credentials (email and optionally password).
+   * @param {string} role - One of 'Admin' | 'Accountant' | 'Cardholder'
+   * @param {string} email
+   * @param {string} [password]
+   */
+  updateRoleCredentials(role, email, password) {
+    const normalize = (r) => {
+      const key = (r || '').toLowerCase().replace(/\s+/g, '');
+      if (key === 'cardholder') return 'Cardholder';
+      if (key === 'accountant') return 'Accountant';
+      return 'Admin';
+    };
+    const key = normalize(role);
+    this.roles[key] = this.roles[key] || { email: '', password: '' };
+    if (email) this.roles[key].email = email;
+    if (password) this.roles[key].password = password;
+    try {
+      const current = fs.existsSync(credPath)
+        ? JSON.parse(fs.readFileSync(credPath, 'utf8'))
+        : {};
+      const existingRoles = current.roles || {};
+      const mergedRoles = { ...existingRoles, [key]: { ...existingRoles[key], ...this.roles[key] } };
+      const merged = { ...current, roles: mergedRoles };
+      fs.writeFileSync(credPath, JSON.stringify(merged));
+      storedCreds = { ...merged };
+    } catch {
+      // ignore file write errors
     }
   },
   otp: {
