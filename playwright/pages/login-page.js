@@ -25,7 +25,7 @@ class LoginPage {
   static async fetchEmailOtp(context, inbox) {
     const mail = await context.newPage();
     // Wait briefly to allow the OTP email to arrive
-    await mail.waitForTimeout(5000);
+    await mail.waitForTimeout(10000);
     await mail.goto(`https://yopmail.com/?${inbox}`);
 
     // Open the first message in the inbox and read its body
@@ -39,7 +39,7 @@ class LoginPage {
 
   /** Navigate to the application's login page. */
   async goto() {
-    await this.page.goto('/login');
+    await this.page.goto('');
     logger.log('Navigated to /login');
   }
 

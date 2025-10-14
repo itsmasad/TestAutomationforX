@@ -11,8 +11,8 @@ try {
 
 module.exports = {
   credentials: {
-    email: storedCreds.email || 'Ryan_Adams1@yopmail.com',
-    password: storedCreds.password || 'Xpendless@A1',
+    email: storedCreds.email || 'kailey781@yopmail.com',
+    password: storedCreds.password || 'xpendless@A1',
   },
   /**
    * Update the credentials used by tests at runtime.
@@ -76,7 +76,7 @@ module.exports = {
     rate: '40',
   },
   categoryGroup: {
-    name: 'Entertainment',
+    name: 'Food',
   },
   company: {
     password: 'xpendless@A1',
