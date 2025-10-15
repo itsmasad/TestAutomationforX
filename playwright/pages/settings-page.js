@@ -30,6 +30,114 @@ class SettingsPage {
     await this.page.getByRole('tab', { name: 'Categories' }).click();
   }
 
+  /** Navigate to the Payment Methods section on Settings. */
+  async openPaymentMethods() {
+    logger.log('Navigate to settings');
+    await this.page.getByRole('link', { name: /settings/i }).click();
+    logger.log('Open payment methods tab');
+    // Some builds may label this tab slightly differently (e.g., "Payments").
+    let tab = this.page.getByRole('tab', { name: /payment methods/i });
+    if (await tab.count() === 0) {
+      tab = this.page.getByRole('tab', { name: /payments/i });
+    }
+    await tab.click();
+  }
+
+  /**
+   * Add a new bank account payment method.
+   * @param {string} bankName - Visible bank option (e.g., 'Qatar National Bank (QNB)').
+   * @param {string} accountName - Account name to save.
+   * @param {string} swift - SWIFT/BIC code.
+   * @param {string} iban - IBAN value.
+   * @param {string} address - Address string.
+   */
+  async addBankAccount(bankName, accountName, swift, iban, address) {
+    logger.log('Open Add Bank Account form');
+    // Primary text: "Add Bank Account"; fall back to generic add button
+    let addBtn = this.page.getByRole('button', { name: /add bank account/i });
+    if (await addBtn.count() === 0) {
+      addBtn = this.page.getByRole('button', { name: /\+\s*add new|add/i });
+    }
+    await addBtn.first().click();
+
+    // Wait for the add dialog/card to appear and scope interactions inside it
+    let dialog = this.page.getByRole('dialog').filter({ hasText: /bank account|payment method/i });
+    if (await dialog.count() === 0) {
+      // Some UIs render a card instead of a dialog; fall back to a section region
+      dialog = this.page.getByRole('region').filter({ hasText: /bank account|payment method|add/i });
+    }
+    const container = (await dialog.count()) > 0 ? dialog.first() : this.page;
+
+    // Select Bank via keyboard (Arrow + Enter), using provided locator id="bankId"
+    logger.log(`Select bank "${bankName}" via keyboard`);
+    let bankDropdown = container.locator('#bankId');
+    if (await bankDropdown.count() === 0) {
+      // Fallbacks if id changes
+      bankDropdown = container.getByRole('combobox', { name: /bank/i });
+      if (await bankDropdown.count() === 0) {
+        bankDropdown = container.getByRole('button', { name: /bank/i });
+      }
+      if (await bankDropdown.count() === 0) {
+        bankDropdown = container.getByLabel(/bank/i);
+      }
+      if (await bankDropdown.count() === 0) {
+        bankDropdown = container.locator('[id*="bank" i], [name*="bank" i], [placeholder*="bank" i]');
+      }
+    }
+    await bankDropdown.first().click();
+    // If the dropdown supports type-to-filter, type the bank name first
+    await this.page.keyboard.type(bankName);
+    await this.page.waitForTimeout(500);
+    // Move to the first matching option and confirm
+    await this.page.keyboard.press('ArrowDown');
+    await this.page.keyboard.press('Enter');
+
+    // Fill fields
+    logger.log(`Fill account name with "${accountName}"`);
+    // Account Name id="accountName"
+    let accountNameField = container.locator('#accountName');
+    if (await accountNameField.count() === 0) {
+      accountNameField = container.getByRole('textbox', { name: /account name/i });
+    }
+    await accountNameField.first().fill(accountName);
+    logger.log(`Fill swift with "${swift}"`);
+    // Swift Code id="swiftCode"
+    let swiftField = container.locator('#swiftCode');
+    if (await swiftField.count() === 0) {
+      swiftField = container.getByRole('textbox', { name: /swift code|swift/i });
+    }
+    await swiftField.first().fill(swift);
+    logger.log(`Fill IBAN with "${iban}"`);
+    // IBAN name="IBAN"
+    let ibanField = container.locator('[name="IBAN"]');
+    if (await ibanField.count() === 0) {
+      ibanField = container.getByRole('textbox', { name: /iban/i });
+    }
+    await ibanField.first().fill(iban);
+    logger.log('Fill address');
+    // Address name="address"
+    let addressField = container.locator('[name="address"]');
+    if (await addressField.count() === 0) {
+      addressField = container.getByRole('textbox', { name: /address/i });
+      if (await addressField.count() === 0) {
+        addressField = container.getByLabel(/address/i);
+      }
+    }
+    await addressField.first().fill(address);
+
+    // Submit
+    logger.log('Submit new bank account');
+    // Submit button id="add_account"
+    let submitBtn = container.locator('#add_account');
+    if (await submitBtn.count() === 0) {
+      submitBtn = container.getByRole('button', { name: /^add$/i });
+      if (await submitBtn.count() === 0) {
+        submitBtn = container.getByRole('button', { name: /save|submit/i });
+      }
+    }
+    await submitBtn.first().click();
+  }
+
   /**
    * Add a new tax code.
    * @param {string} name - Name of the tax code.
@@ -41,7 +149,7 @@ class SettingsPage {
     logger.log(`Fill tax code name with "${name}"`);
     await this.page.getByRole('textbox', { name: 'Name' }).fill(name);
     logger.log(`Fill tax rate with "${rate}"`);
-    await this.page.getByRole('textbox', { name: 'Tax rate' }).fill(String(rate));
+    await this.page.getByRole('textbox', { name: 'Enter rate' }).fill(String(rate));
     logger.log('Submit new tax code');
     await this.page.getByRole('button', { name: 'Add', exact: true }).click();
   }
@@ -108,7 +216,13 @@ class SettingsPage {
    */
   findCategoryGroupRow(name) {
     logger.log(`Locate category group row for "${name}"`);
-    return this.page.getByRole('row', { name: new RegExp(name, 'i') });
+    const escaped = String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(escaped, 'i');
+    // Be tolerant of different renderers: tables, lists, generic rows
+    return this.page
+      .locator('[role="row"], [role="listitem"], tr, li, .table-row, .list-item, [data-testid*="row" i]')
+      .filter({ hasText: re })
+      .first();
   }
 }
 

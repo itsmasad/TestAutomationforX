@@ -51,4 +51,20 @@ test.describe.serial('settings', () => {
     const groupRow = settings.findCategoryGroupRow(testData.categoryGroup.name);
     await expect(groupRow).toContainText(testData.categoryGroup.name);
   });
+
+  test.only('add new payment method (bank account)', async () => {
+    await settings.openPaymentMethods();
+
+    const bankName = 'Qatar National Bank (QNB)';
+    const accountName = testData.companyMeta.name || 'Test Company';
+    const swift = 'QNBAQAQAXXX';
+    const randomDigits = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)).join('');
+    const iban = `QNB${randomDigits}`;
+    const address = testData.company.addressLine1 || 'Test Address';
+
+    await settings.addBankAccount(bankName, accountName, swift, iban, address);
+
+    const successToast = page.locator('.Toastify__toast--success').last();
+    await expect(successToast).toBeVisible();
+  });
 });

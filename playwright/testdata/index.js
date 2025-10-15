@@ -11,7 +11,7 @@ try {
 
 module.exports = {
   credentials: {
-    email: storedCreds.email || 'olen346@yopmail.com',
+    email: storedCreds.email || 'ressie356@yopmail.com',
     password: storedCreds.password || 'xpendless@A1',
   },
   // Company metadata captured during company registration
