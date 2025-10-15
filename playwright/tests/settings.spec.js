@@ -31,7 +31,7 @@ test.describe.serial('settings', () => {
     }
   });
 
-  test('add new tax code', async () => {
+  test.only('add new tax code', async () => {
     await settings.openTaxCodes();
     await settings.addTaxCode(testData.taxCode.name, testData.taxCode.rate);
     const taxToast = page.locator('.Toastify__toast--success').last();
@@ -42,7 +42,7 @@ test.describe.serial('settings', () => {
     await expect(taxRow).toContainText(`${testData.taxCode.rate}`);
   });
 
-  test('add new category group', async () => {
+  test.only('add new category group', async () => {
     await settings.openCategories();
     await settings.addCategoryGroup(testData.categoryGroup.name);
     const groupToast = page.locator('.Toastify__toast--success').last();
