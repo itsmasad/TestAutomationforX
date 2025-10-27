@@ -26,7 +26,9 @@ class LoginPage {
     const mail = await context.newPage();
     // Wait briefly to allow the OTP email to arrive
     await mail.waitForTimeout(10000);
-    await mail.goto(`https://yopmail.com/?${inbox}`);
+    const mailbox = encodeURIComponent((inbox || '').trim());
+    logger.log(`Open Yopmail inbox: ${mailbox}`);
+    await mail.goto(`https://yopmail.com/?${mailbox}`);
 
     // Open the first message in the inbox and read its body
     const inboxFrame = mail.frameLocator('#ifinbox');

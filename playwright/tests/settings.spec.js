@@ -31,7 +31,7 @@ test.describe.serial('settings', () => {
     }
   });
 
-  test.only('add new tax code', async () => {
+  test('add new tax code', async () => {
     await settings.openTaxCodes();
     await settings.addTaxCode(testData.taxCode.name, testData.taxCode.rate);
     const taxToast = page.locator('.Toastify__toast--success').last();
@@ -42,17 +42,17 @@ test.describe.serial('settings', () => {
     await expect(taxRow).toContainText(`${testData.taxCode.rate}`);
   });
 
-  test.only('add new category group', async () => {
+  test('add new category group', async () => {
     await settings.openCategories();
     await settings.addCategoryGroup(testData.categoryGroup.name);
     const groupToast = page.locator('.Toastify__toast--success').last();
     await expect(groupToast).toBeVisible();
     await groupToast.waitFor({ state: 'hidden' });
-    const groupRow = settings.findCategoryGroupRow(testData.categoryGroup.name);
-    await expect(groupRow).toContainText(testData.categoryGroup.name);
+    const groupHeader = settings.findCategoryGroupHeader(testData.categoryGroup.name);
+    await expect(groupHeader).toBeVisible();
   });
 
-  test.only('add new payment method (bank account)', async () => {
+  test('add new payment method (bank account)', async () => {
     await settings.openPaymentMethods();
 
     const bankName = 'Qatar National Bank (QNB)';

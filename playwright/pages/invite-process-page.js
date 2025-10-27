@@ -28,15 +28,11 @@ class InviteProcessPage {
    */
   roleEmail(def) {
     const saved = testData.roles[def.key]?.email;
-    if (saved) return saved;
-    const companyName = testData.companyMeta.name || '';
-    const suffix =
-      testData.companyMeta.suffix ||
-      ((testData.credentials.email || '').match(/(\d{3})$/) || [, ''])[1] ||
-      '';
-    const baseNoLimited = companyName.replace(/\bLimited\b/gi, '').trim();
-    const companyKey = `${baseNoLimited.replace(/[^a-zA-Z0-9]/g, '')}${suffix}`.toLowerCase();
-    return `${def.prefix}${companyKey}@yopmail.com`;
+    if (!saved) {
+      throw new Error(`Missing saved email for role ${def.key}. Ensure user-creation test stored it in testdata/credentials.json`);
+    }
+    logger.log(`Using saved invite email for ${def.key}: ${saved}`);
+    return saved;
   }
 
   /** Fill the OTP widget with a 6-digit code. */
@@ -118,7 +114,18 @@ class InviteProcessPage {
 
     // Verify landing
     if (def.key === 'Cardholder') {
-      await this.page.getByRole('link', { name: /expenses/i }).waitFor();
+      // Prefer ARIA link if present
+      const expLink = this.page.getByRole('link', { name: /expenses/i });
+      if (await expLink.count()) {
+        await expLink.first().waitFor();
+      } else {
+        // Fallback: UI uses a div menu tile for Expenses
+        await this.page
+          .locator('div.nav-link.menu')
+          .filter({ hasText: /\bexpenses\b/i })
+          .first()
+          .waitFor();
+      }
     } else {
       await this.page.getByRole('link', { name: /dashboard/i }).waitFor();
     }
@@ -139,4 +146,3 @@ class InviteProcessPage {
 }
 
 module.exports = { InviteProcessPage };
-

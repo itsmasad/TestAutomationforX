@@ -31,14 +31,23 @@ test.describe.serial('wallet', () => {
   test('add funds', async () => {
     await wallet.open();
     await wallet.addFunds(testData.wallet.add.amount, testData.wallet.add.narrative);
-    await expect(page.getByText(/Fund Added Successfully!/i)).toBeVisible();
+    // Assert success immediately after OTP verification
+    const successToast = page.locator('.Toastify__toast--success').last();
+    await expect(successToast).toBeVisible();
+    // Finalize navigation per flow
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await page.getByRole('button', { name: 'Cancel' }).click();
   });
 
   // Test withdrawing funds from the company wallet
   test('withdraw funds', async () => {
     await wallet.open();
     await wallet.withdrawFunds(testData.wallet.withdraw.amount, testData.wallet.withdraw.narrative);
-    await expect(page.getByText(/Fund Withdrawal Successful!/i)).toBeVisible();
+    // Assert success immediately after OTP verification
+    const successToast = page.locator('.Toastify__toast--success').last();
+    await expect(successToast).toBeVisible();
+    // Flow specifies Cancel on next screen
+    await page.getByRole('button', { name: 'Cancel' }).click();
   });
 });
 

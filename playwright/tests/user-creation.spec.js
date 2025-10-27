@@ -18,7 +18,7 @@ const nameMap = {
   'Card Holder': { first: 'Card', last: 'Holder' },
 };
 
-test.only('create users for all roles', async ({ page, context }) => {
+test('create users for all roles', async ({ page, context }) => {
   const loginPage = new LoginPage(page, context);
   await loginPage.login(
     testData.credentials.email,
@@ -29,12 +29,11 @@ test.only('create users for all roles', async ({ page, context }) => {
   await users.open();
 
   for (const role of roles) {
-    // Build email using company name (excluding "Limited") and the same 3-digit suffix
-    const companyName = testData.companyMeta.name || '';
-    const suffix = testData.companyMeta.suffix || ((testData.credentials.email || '').match(/(\d{3})$/) || [,''])[1] || '';
-    const baseNoLimited = companyName.replace(/\bLimited\b/ig, '').trim();
-    const companyKey = `${baseNoLimited.replace(/[^a-zA-Z0-9]/g, '')}${suffix}`.toLowerCase();
-    const emailLocal = `${emailPrefix[role]}${companyKey}`;
+    // Email format: prefix + companyfirstname + 2digits @yopmail.com (no plus signs)
+    const companyName = (testData.companyMeta.name || '').replace(/\bLimited\b/ig, '').trim();
+    const companyFirst = (companyName.split(/\s+/)[0] || 'company').replace(/[^a-zA-Z]/g, '').toLowerCase();
+    const twoDigits = UsersPage.randomDigits(2);
+    const emailLocal = `${emailPrefix[role]}${companyFirst}${twoDigits}`;
     await users.addUser({
       firstName: nameMap[role].first,
       lastName: nameMap[role].last,

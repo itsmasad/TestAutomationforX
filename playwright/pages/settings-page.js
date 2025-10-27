@@ -224,6 +224,19 @@ class SettingsPage {
       .filter({ hasText: re })
       .first();
   }
+
+  /**
+   * Locate a category group header element with class "green-header-text" matching the name.
+   * Ensures that among potentially multiple elements, at least one matches the expected value.
+   * @param {string} name
+   * @returns {import('@playwright/test').Locator}
+   */
+  findCategoryGroupHeader(name) {
+    logger.log(`Locate category group header for "${name}"`);
+    const escaped = String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(`^\\s*${escaped}\\s*$`, 'i');
+    return this.page.locator('.green-header-text').filter({ hasText: re }).first();
+  }
 }
 
 module.exports = { SettingsPage };
