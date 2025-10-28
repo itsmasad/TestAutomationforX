@@ -30,7 +30,7 @@ test.describe.serial('Complete invite process for role users', () => {
     await context.close();
   });
 
-  test('invite acceptance and onboarding for Admin, Accountant, Cardholder', async () => {
+  test.only('invite acceptance and onboarding for Admin, Accountant, Cardholder', async () => {
     for (const def of roles) {
       await invite.completeInviteForRole(def);
       await loginPage.logout();

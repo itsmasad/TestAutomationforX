@@ -32,7 +32,7 @@ try {
 
 module.exports = {
   credentials: {
-    email: storedCreds.email || 'coby950@yopmail.com',
+    email: storedCreds.email || 'oda247@yopmail.com',
     password: storedCreds.password || 'xpendless@A1',
   },
   // Company metadata captured during company registration
